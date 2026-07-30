@@ -1,0 +1,52 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+
+  // Discovery runs from backend/, because pytest's testpaths and pythonpath are
+  // configured in backend/pyproject.toml and only resolve from there. With this the
+  // Testing panel and the gutter arrows work; without it neither finds anything.
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}/backend",
+  "python.testing.pytestArgs": [],
+
+  // Format with black, lint and sort imports with ruff — the same split the quality
+  // bar uses. Ruff's formatter is black-compatible but not byte-identical, so leaving
+  // it as the formatter meant a saved file could still fail `black --check`.
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+
+  "ruff.configuration": "${workspaceFolder}/backend/pyproject.toml",
+  "black-formatter.args": ["--config", "${workspaceFolder}/backend/pyproject.toml"],
+  "black-formatter.cwd": "${workspaceFolder}/backend",
+  "black-formatter.path": ["${workspaceFolder}/backend/.venv/bin/black"],
+  "mypy-type-checker.cwd": "${workspaceFolder}/backend",
+
+  "eslint.workingDirectories": [
+    { "directory": "frontend", "changeProcessCWD": true }
+  ],
+
+  "search.exclude": {
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
+    "**/uv.lock": true,
+    "**/pnpm-lock.yaml": true
+  },
+
+  "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true
+  },
+
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
+}

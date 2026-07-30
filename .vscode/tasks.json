@@ -1,0 +1,76 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      // Debugging the API on the host means port 8000 has to be free, so the
+      // containerised backend steps aside. Postgres stays up because the app
+      // and the tests both need it. Both commands are idempotent.
+      "label": "free port 8000 for the debugger",
+      "type": "shell",
+      "command": "docker compose up -d postgres && docker compose stop backend",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "silent", "panel": "shared", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "restore the backend container",
+      "type": "shell",
+      "command": "docker compose start backend",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      // The suite creates its own glance_test database but still needs a server.
+      "label": "database up",
+      "type": "shell",
+      "command": "docker compose up -d postgres",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      // The cockpit's bottom pane: bring the whole stack up and stream the backend's
+      // logs, so every model turn (and any failover to the backup LLM) scrolls live
+      // while you click around the app. Works with Docker or Podman (docker alias).
+      "label": "stack up + follow backend logs",
+      "type": "shell",
+      "command": "docker compose up -d && docker compose logs -f backend",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      // Drives a real conversation against the running stack. Costs API credit and
+      // needs ANTHROPIC_API_KEY in .env. Brings the container up first so it works
+      // whether or not the debugger has freed port 8000. Pick broad/evasive here;
+      // to run in the cloud instead, use the "GitHub: run live conduct check" task.
+      "label": "live check: broad (local)",
+      "type": "shell",
+      "command": "docker compose up -d >/dev/null && python3 scripts/live_conversation.py broad",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "live check: evasive (local)",
+      "type": "shell",
+      "command": "docker compose up -d >/dev/null && python3 scripts/live_conversation.py evasive",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      // Triggers the Live conduct check workflow on GitHub without opening a browser.
+      // Needs the gh CLI authenticated (gh auth login). Watch it in the GitHub
+      // Actions panel, or follow the run this prints with `gh run watch`.
+      "label": "GitHub: run live conduct check",
+      "type": "shell",
+      "command": "gh workflow run live-conduct.yml -f scenario=broad && echo 'Triggered. Open the GitHub Actions panel or run: gh run watch'",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    }
+  ]
+}

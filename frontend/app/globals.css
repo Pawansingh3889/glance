@@ -1,0 +1,1167 @@
+:root {
+  --deep: #23262b;
+  --mist: #eceef0;
+  --off: #f7f8f9;
+  --white: #ffffff;
+  --cream: #eceef0;
+  --clay: #98a0a8;
+  --clay-lt: #c9ced3;
+  --grey: #636b73;
+  --teal: #9ec6e0;
+  --airforce: #3c5570;
+  --gold: #e2b23c;
+  --ember: #dfe4e8;
+  --line: rgba(35, 38, 43, 0.1);
+  --line2: rgba(35, 38, 43, 0.06);
+  --warn-fill: #fdf3d9;
+  --warn-text: #7a4a06;
+  --warn-border: rgba(122, 74, 6, 0.25);
+  --err-fill: #fadbd5;
+  --err-text: #8a2c18;
+  --err-border: rgba(138, 44, 24, 0.25);
+  --ai-fill: #e9eef5;
+  --ai-border: rgba(60, 85, 112, 0.2);
+  /* Secondary text on a light background. --clay is the right *weight* for this but
+     only reaches 2.6:1 on white, well under the 4.5:1 WCAG AA wants for body text —
+     it stays the choice on the dark top bar, where it sits at ~5.9:1. */
+  --muted-ink: #5c646d;
+  --radius: 8px;
+  --shadow-card: 0 1px 2px rgba(35, 38, 43, 0.04), 0 8px 24px rgba(35, 38, 43, 0.06);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  font-family: var(--font);
+  background: var(--mist);
+  color: var(--deep);
+  font-size: 13.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Nothing in this app drew a focus ring, so a keyboard user had no way to tell where
+   they were. :focus-visible rather than :focus, so it appears for keyboard and
+   assistive navigation without ringing every mouse click. */
+:focus-visible {
+  outline: 2px solid var(--airforce);
+  outline-offset: 2px;
+}
+/* On the dark bar the airforce ring is nearly invisible; the light one is not. */
+.topbar :focus-visible {
+  outline-color: var(--teal);
+}
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--deep);
+}
+
+.topbar {
+  height: 54px;
+  background: var(--deep);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.topbar-brand {
+  font-weight: 800;
+  font-size: 15px;
+}
+.topbar-brand span {
+  color: var(--teal);
+  font-weight: 600;
+}
+/* Identity, not a user picker. The dropdown this replaces let anyone act as anyone,
+   which stopped being true the moment the backend started requiring a token. */
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.topbar-avatar {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--airforce);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.topbar-identity {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+.topbar-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--clay);
+}
+/* Present but recessive: signing out is available, never the thing you reach for. */
+.btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--cream);
+  padding: 6px 12px;
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+/* Below this the name is the first thing worth losing — the avatar still identifies
+   who is signed in, and Sign out must stay reachable. */
+@media (max-width: 560px) {
+  .topbar {
+    padding: 0 12px;
+  }
+  .topbar-left {
+    gap: 14px;
+  }
+  .topbar-identity {
+    display: none;
+  }
+}
+
+.app-main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.page-head h1 {
+  font-size: 19px;
+  font-weight: 800;
+}
+.muted {
+  color: var(--muted-ink);
+  font-style: italic;
+}
+.empty {
+  max-width: 1120px;
+  margin: 60px auto;
+  text-align: center;
+  color: var(--muted-ink);
+  font-style: italic;
+}
+.error-text {
+  color: var(--err-text);
+  background: var(--err-fill);
+  border: 1px solid var(--err-border);
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 12.5px;
+}
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.card-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--airforce);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.btn {
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.btn-primary {
+  background: var(--deep);
+  color: var(--white);
+}
+.btn-secondary {
+  background: var(--white);
+  border-color: var(--line);
+  color: var(--deep);
+}
+.btn-ai {
+  background: var(--white);
+  border-color: var(--teal);
+  color: var(--airforce);
+}
+.btn-danger {
+  background: var(--err-fill);
+  border-color: var(--err-border);
+  color: var(--err-text);
+}
+/* Destructive actions stay quiet until asked for, then commit in the error palette. */
+.btn-quiet {
+  background: transparent;
+  color: var(--grey);
+}
+.btn-quiet:hover {
+  color: var(--err-text);
+}
+
+.field {
+  width: 100%;
+  background: var(--off);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px 10px;
+}
+.field:focus {
+  outline: none;
+  background: var(--white);
+  border-color: var(--teal);
+}
+textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.generate-card textarea {
+  width: 100%;
+  background: var(--off);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px;
+  min-height: 72px;
+}
+.generate-card textarea:focus {
+  outline: none;
+  background: var(--white);
+  border-color: var(--teal);
+}
+.generate-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.template-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.template-row:hover {
+  border-color: var(--clay-lt);
+}
+.template-title {
+  font-weight: 700;
+}
+.template-meta {
+  color: var(--grey);
+  font-size: 12px;
+}
+
+.pill {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 20px;
+  padding: 3px 9px;
+}
+.pill-draft {
+  background: var(--warn-fill);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
+}
+.pill-published {
+  background: var(--ai-fill);
+  color: var(--airforce);
+  border: 1px solid var(--ai-border);
+}
+.pill-archived {
+  background: var(--off);
+  color: var(--grey);
+  border: 1px solid var(--line);
+}
+
+.builder {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .builder {
+    grid-template-columns: 1fr;
+  }
+}
+.builder-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.builder-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.builder-title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 800;
+  background: var(--off);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px 10px;
+}
+.builder-title:focus {
+  outline: none;
+  background: var(--white);
+  border-color: var(--teal);
+}
+.builder-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.builder-desc {
+  min-height: 48px;
+}
+
+/* Refine-with-AI panel in the builder's right column */
+.builder-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.refine-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.refine-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.refine-hint {
+  font-size: 12.5px;
+  margin: 0;
+}
+.refine-note {
+  background: var(--ai-fill);
+  border: 1px solid var(--ai-border);
+  border-radius: 9px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--airforce);
+}
+.refine-form {
+  display: flex;
+  gap: 8px;
+}
+.refine-form .field {
+  flex: 1;
+}
+
+.questions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qcard {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+.qcard-top {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.qcard-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--ember);
+  color: var(--airforce);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex: none;
+  margin-top: 3px;
+}
+.qcard-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.qcard-controls {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--grey);
+  display: grid;
+  place-items: center;
+}
+.icon-btn:hover {
+  border-color: var(--clay-lt);
+}
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.qcard-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.qcard-flags {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--grey);
+}
+.qcard-flags label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+select.field {
+  width: auto;
+  padding: 7px 9px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: var(--off);
+  border: 1px solid var(--line2);
+  border-radius: 9px;
+}
+.option-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.option-row input {
+  flex: 1;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 8px;
+}
+.add-dashed,
+.add-question {
+  border: 1px dashed var(--clay-lt);
+  color: var(--airforce);
+  background: transparent;
+  font-weight: 600;
+}
+.add-dashed {
+  border-radius: 9px;
+  padding: 8px;
+  font-size: 12px;
+}
+.add-question {
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.preview {
+  position: sticky;
+  top: 20px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line2);
+}
+.preview-head .card-label {
+  margin: 0;
+}
+.segmented {
+  display: inline-flex;
+  background: var(--mist);
+  border-radius: 20px;
+  padding: 2px;
+}
+.segmented button {
+  border: none;
+  background: transparent;
+  border-radius: 18px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--grey);
+}
+.segmented button.active {
+  background: var(--white);
+  color: var(--deep);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.preview-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.chat-q {
+  background: var(--off);
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.chat-afford {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.chip {
+  border-radius: 20px;
+  border: 1px solid var(--clay-lt);
+  background: var(--white);
+  color: var(--airforce);
+  font-size: 11.5px;
+  padding: 4px 10px;
+}
+.chip-dashed {
+  border-style: dashed;
+}
+.stars {
+  color: var(--gold);
+  font-size: 16px;
+  margin-top: 6px;
+}
+.preview-empty {
+  color: var(--muted-ink);
+  font-style: italic;
+  font-size: 12.5px;
+}
+.form-q {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.form-q label {
+  font-size: 12px;
+  font-weight: 600;
+}
+.form-q .type-hint {
+  font-size: 11px;
+  color: var(--muted-ink);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.topbar-nav {
+  display: flex;
+  gap: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.topbar-nav a {
+  color: var(--clay);
+}
+.topbar-nav a:hover {
+  color: var(--cream);
+}
+
+.survey-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.survey-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.chat-progress {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--grey);
+  font-weight: 600;
+}
+.progress-bar {
+  flex: 1;
+  max-width: 240px;
+  height: 4px;
+  background: var(--off);
+  border: 1px solid var(--line2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+  transition: width 200ms ease;
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  min-height: 320px;
+  max-height: 58vh;
+  overflow-y: auto;
+}
+.bubble {
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 82%;
+  white-space: pre-wrap;
+  animation: rise 180ms ease both;
+}
+.bubble-assistant {
+  align-self: flex-start;
+}
+.bubble-user {
+  align-self: flex-end;
+  background: var(--off);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 0;
+}
+.typing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--clay-lt);
+  animation: blink 1.2s infinite;
+}
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    animation: none;
+  }
+  .typing span {
+    animation: none;
+  }
+  .progress-bar span {
+    transition: none;
+  }
+}
+
+.afford {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.afford-inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.afford-inline .field {
+  width: auto;
+}
+.afford-hint {
+  color: var(--muted-ink);
+  font-style: italic;
+}
+.chip:hover:not(:disabled) {
+  border-color: var(--airforce);
+}
+.chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.chip-on {
+  background: var(--ai-fill);
+  border-color: var(--ai-border);
+  font-weight: 600;
+}
+.star {
+  background: none;
+  border: none;
+  color: var(--clay-lt);
+  font-size: 21px;
+  line-height: 1;
+  padding: 0 1px;
+}
+.star:hover:not(:disabled) {
+  color: var(--gold);
+}
+.star:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+}
+.composer .field {
+  flex: 1;
+}
+.chat-done {
+  background: var(--ai-fill);
+  border: 1px solid var(--ai-border);
+  color: var(--airforce);
+  border-radius: 9px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .results {
+    grid-template-columns: 1fr;
+  }
+}
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.result-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 8px;
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.result-row:hover {
+  border-color: var(--clay-lt);
+}
+.result-row-on {
+  border-color: var(--teal);
+}
+.result-name {
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.result-meta {
+  grid-column: 1;
+  color: var(--grey);
+  font-size: 11.5px;
+}
+.result-row .pill {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+}
+.results-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.answer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: var(--off);
+  border: 1px solid var(--line2);
+  border-radius: 9px;
+}
+.answer-q {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--grey);
+}
+.answer-v {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.answer-stamp {
+  font-size: 11px;
+  color: var(--muted-ink);
+  margin-top: 2px;
+}
+/* A follow-up sits under the question it probed, indented against a hairline. */
+.answer-follow {
+  margin-top: 8px;
+  padding-left: 10px;
+  border-left: 2px solid var(--ai-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 11.5px;
+  color: var(--grey);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--line2);
+}
+.chip-follow {
+  background: var(--ai-fill);
+  border-color: var(--ai-border);
+  font-size: 10px;
+  padding: 1px 7px;
+}
+.chat-thread-flat {
+  border: none;
+  padding: 0;
+  min-height: 0;
+  max-height: 40vh;
+}
+
+/* ---------------------------------------------------------------- AI run summary */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.summary-headline {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+.summary-facts {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13.5px;
+}
+.summary-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* Quotes are the respondent's verbatim words, so they are set apart from the model's
+   own prose above them rather than styled like it. */
+.summary-quote {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--ai-fill);
+  border-left: 2px solid var(--ai-border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13.5px;
+  font-style: italic;
+}
+.summary-quote cite {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-style: normal;
+  color: var(--grey);
+}
+
+/* ------------------------------------------------- conditional visibility (builder) */
+.qcard-visibility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  font-size: 12.5px;
+}
+.qcard-visibility select,
+.qcard-visibility input {
+  font-size: 12.5px;
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--white);
+  max-width: 190px;
+}
+.qcard-vis-label {
+  color: var(--airforce);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+/* A cleared condition is a silent change to survey behaviour, so it is announced. */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  margin-bottom: 10px;
+  border-radius: var(--radius);
+  background: var(--warn-fill);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
+  font-size: 12.5px;
+}
+.link-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  color: inherit;
+  font-size: 12.5px;
+}
+
+/* "Finish later" — leaving mid-run is safe because every turn is already persisted. */
+.chat-later {
+  margin-top: 8px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--grey);
+}
+
+/* ---------------------------------------------------------------- sign in
+   The app's front door. Before this existed the only way in was a user dropdown
+   populated by an endpoint that required the credentials you did not yet have. */
+.boot {
+  min-height: 100vh;
+  background: var(--mist);
+}
+.signin {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 20px;
+}
+.signin-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+}
+.signin-brand {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--deep);
+}
+.signin-brand span {
+  color: var(--airforce);
+  font-weight: 600;
+}
+.signin-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 18px;
+  letter-spacing: -0.01em;
+}
+.signin-sub {
+  color: var(--muted-ink);
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 22px;
+}
+.signin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.signin-field span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--airforce);
+}
+.signin-field .field {
+  padding: 10px 12px;
+}
+.signin-submit {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 13px;
+}
+
+.signin-demo {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line2);
+}
+.signin-demo-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-ink);
+  margin-bottom: 10px;
+}
+.signin-demo-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* The chip carries a name and a role. Without a gap they ran together as one word —
+   "Ava Whitlockcreator". */
+.signin-demo-list .chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.chip-role {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-ink);
+}
