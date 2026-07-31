@@ -108,6 +108,10 @@ services:
       # address rather than the in-network one. The backend's CORS allow-list is
       # FRONTEND_ORIGIN, which defaults to http://localhost:3000 to match.
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      # pnpm re-installs on start when the bind-mounted lockfile is newer than the
+      # node_modules volume, and that install may need to purge the modules dir.
+      # There is no TTY to confirm the purge, so without this it aborts the start.
+      CI: "true"
     depends_on:
       - backend
     ports:
