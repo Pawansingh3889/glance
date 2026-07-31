@@ -170,7 +170,7 @@ async def test_me_does_not_return_the_password_hash(client, session):
 
     assert response.status_code == 200
     assert "password" not in response.text
-    assert set(response.json()) == {"id", "email", "display_name", "role"}
+    assert set(response.json()) == {"id", "email", "display_name", "role", "contact_email"}
 
 
 # ------------------------------------------------------------------ hashing

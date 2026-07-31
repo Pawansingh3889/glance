@@ -29,6 +29,17 @@ class LoginRequest(BaseModel):
     password: Annotated[str, StringConstraints(min_length=1, max_length=1024)]
 
 
+class GuestRequest(BaseModel):
+    """A participant arriving without an account. A name so a report has someone's name
+    on it, and optionally an address so they can be reached about it — nothing else, and
+    no password, because there is no account to protect."""
+
+    display_name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)
+    ]
+    email: EmailStr | None = None
+
+
 class TokenResponse(BaseModel):
     """OAuth-shaped, because clients and tooling already know this shape.
 
@@ -46,6 +57,9 @@ class AuthenticatedUser(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    email: EmailStr
+    # None for a guest participant, who never gave one. Typed optional rather than
+    # defaulted to "" so a client cannot mistake absence for an empty address.
+    email: EmailStr | None
     display_name: str
     role: UserRole
+    contact_email: EmailStr | None = None

@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.passwords import hash_password, needs_rehash, verify_password
-from app.auth.schemas import RegisterRequest
+from app.auth.schemas import GuestRequest, RegisterRequest
 from app.auth.tokens import TokenIssuer
 from app.errors import ConflictError, UnauthorizedError
 from app.users.models import User, UserRole
@@ -53,6 +53,34 @@ class AuthService:
 
         await self.session.refresh(user)
         token, expires_in = self.issuer.issue(user.id)
+        return user, token, expires_in
+
+    async def start_guest(self, data: GuestRequest) -> tuple[User, str, int]:
+        """Admit a participant who has no account.
+
+        Every call mints a *new* row, even when the same address is given twice. Looking
+        an address up and reusing what it found would turn this endpoint into a way to
+        assume an existing identity — type a colleague's address, receive a token for
+        their account, read their answers — and no password is being checked here to
+        stop it. A fresh row grants access to nothing but itself.
+
+        The address, when given, is stored as contact detail (``contact_email``) and
+        never as ``email``: it identifies nobody and is not unique.
+        """
+        user = User(
+            email=None,
+            contact_email=str(data.email).strip().lower() if data.email else None,
+            display_name=data.display_name,
+            role=UserRole.participant,
+            # No hash, so this row can never be used to log in locally. The only way to
+            # hold it is to be handed the token issued right here.
+            password_hash=None,
+        )
+        self.session.add(user)
+        await self.session.commit()
+        await self.session.refresh(user)
+        token, expires_in = self.issuer.issue(user.id)
+        logger.info("guest admitted user=%s contactable=%s", user.id, bool(user.contact_email))
         return user, token, expires_in
 
     async def login(self, email: str, password: str) -> tuple[User, str, int]:

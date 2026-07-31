@@ -5,7 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.status import HTTP_201_CREATED
 
 from app.auth.dependencies import get_current_user
-from app.auth.schemas import AuthenticatedUser, LoginRequest, RegisterRequest, TokenResponse
+from app.auth.schemas import (
+    AuthenticatedUser,
+    GuestRequest,
+    LoginRequest,
+    RegisterRequest,
+    TokenResponse,
+)
 from app.auth.service import AuthService
 from app.auth.tokens import TokenIssuer, build_issuer
 from app.config import get_settings
@@ -41,6 +47,22 @@ async def login(
     issuer: TokenIssuer = Depends(get_token_issuer),
 ) -> TokenResponse:
     _, token, expires_in = await AuthService(session, issuer).login(data.email, data.password)
+    return TokenResponse(access_token=token, expires_in=expires_in)
+
+
+@router.post("/guest", response_model=TokenResponse, status_code=HTTP_201_CREATED)
+async def start_guest(
+    data: GuestRequest,
+    session: AsyncSession = Depends(get_session),
+    issuer: TokenIssuer = Depends(get_token_issuer),
+) -> TokenResponse:
+    """Admit a participant with a name and, if they want, an address to be reached on.
+
+    Open by design. Answering a survey and reporting a hazard are things the floor has to
+    be able to do without an account, and the token this returns carries the participant
+    role and nothing more — it cannot read anyone else's answers or reach a creator route.
+    """
+    _, token, expires_in = await AuthService(session, issuer).start_guest(data)
     return TokenResponse(access_token=token, expires_in=expires_in)
 
 
