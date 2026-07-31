@@ -1,0 +1,105 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { useCreateTemplate, useCurrentUser, useGenerateTemplate, useTemplates } from "@/lib/queries";
+import { useDraftNoteStore } from "@/lib/store";
+
+export default function Home() {
+  const currentUser = useCurrentUser();
+  const { data: templates, isLoading, error } = useTemplates();
+  const create = useCreateTemplate();
+  const generate = useGenerateTemplate();
+  const router = useRouter();
+  const [prompt, setPrompt] = useState("");
+  const setPendingNote = useDraftNoteStore((s) => s.setPendingNote);
+
+  // Build is creator-only on the backend; a participant landing here belongs on
+  // Respond, not on a page of 403s.
+  const isParticipant = currentUser?.role === "participant";
+  useEffect(() => {
+    if (isParticipant) router.replace("/respond");
+  }, [isParticipant, router]);
+
+  if (isParticipant) {
+    return <div className="empty">Taking you to Respond…</div>;
+  }
+
+  async function onCreate() {
+    const t = await create.mutateAsync({ title: "Untitled survey", questions: [] });
+    router.push(`/templates/${t.id}`);
+  }
+
+  async function onGenerate() {
+    if (!prompt.trim()) return;
+    const { template, note } = await generate.mutateAsync(prompt.trim());
+    // Hand the note to the builder, then drop straight into it with the questions.
+    if (note) setPendingNote(template.id, note);
+    router.push(`/templates/${template.id}`);
+  }
+
+  return (
+    <div className="page">
+      <div className="page-head">
+        <h1>Survey templates</h1>
+        <button className="btn btn-primary" onClick={onCreate} disabled={create.isPending}>
+          {create.isPending ? "Creating…" : "New template"}
+        </button>
+      </div>
+
+      {create.error ? (
+        <div className="error-text">{(create.error as Error).message}</div>
+      ) : null}
+
+      <div className="card generate-card">
+        <div className="card-label">✦ Draft with AI</div>
+        <textarea
+          placeholder="Describe the survey… e.g. An onboarding survey for factory staff: their role, the systems they use daily, and their biggest data frustrations."
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+        />
+        <div className="generate-actions">
+          <button
+            className="btn btn-ai"
+            onClick={onGenerate}
+            disabled={generate.isPending || !prompt.trim()}
+          >
+            {generate.isPending ? "Drafting…" : "✦ Generate draft"}
+          </button>
+        </div>
+        {generate.error ? (
+          <div className="error-text">{(generate.error as Error).message}</div>
+        ) : null}
+      </div>
+
+      {isLoading ? <div className="muted">Loading…</div> : null}
+      {error ? <div className="error-text">{(error as Error).message}</div> : null}
+
+      <div className="template-list">
+        {templates?.map((t) => (
+          <Link key={t.id} href={`/templates/${t.id}`} className="template-row">
+            <div>
+              <div className="template-title">{t.title}</div>
+              <div className="template-meta">
+                {t.question_count} question{t.question_count === 1 ? "" : "s"}
+                {" · edited "}
+                {new Date(t.updated_at).toLocaleString(undefined, {
+                  day: "numeric",
+                  month: "short",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+            </div>
+            <span className={`pill pill-${t.status}`}>{t.status}</span>
+          </Link>
+        ))}
+        {templates && templates.length === 0 ? (
+          <div className="muted">No templates yet. Create one or draft with AI.</div>
+        ) : null}
+      </div>
+    </div>
+  );
+}

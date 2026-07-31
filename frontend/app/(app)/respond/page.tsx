@@ -21,7 +21,7 @@ export default function RespondPage() {
   // back to Build rather than let them start a run under their own name.
   const isCreator = currentUser?.role === "creator";
   useEffect(() => {
-    if (isCreator) router.replace("/");
+    if (isCreator) router.replace("/templates");
   }, [isCreator, router]);
 
   if (isCreator) {

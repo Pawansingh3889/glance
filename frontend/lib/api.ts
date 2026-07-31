@@ -1,8 +1,12 @@
 import { useAuthStore } from "./store";
 import type {
+  AskAnswer,
   AuthToken,
   Credentials,
   GeneratedTemplate,
+  IncidentAnswerWrite,
+  IncidentForm,
+  IncidentReceipt,
   Run,
   ResumableRun,
   RunDetail,
@@ -112,6 +116,13 @@ export const api = {
   /** Who the current token belongs to. The role comes from the database on every call,
    *  so it reflects a promotion or demotion without needing a fresh token. */
   me: () => request<User>("/auth/me"),
+  /** Admits a participant with no account. The name is required; the address is contact
+   *  detail only and is never used to find or reuse an existing account. */
+  startGuest: (display_name: string, email?: string) =>
+    request<AuthToken>("/auth/guest", {
+      method: "POST",
+      body: JSON.stringify(email ? { display_name, email } : { display_name }),
+    }),
   listUsers: () => request<User[]>("/users"),
   listTemplates: () => request<TemplateSummary[]>("/templates"),
   getTemplate: (id: string) => request<Template>(`/templates/${id}`),
@@ -149,4 +160,15 @@ export const api = {
       `/templates/${templateId}/runs/${runId}/summary${refresh ? "?refresh=true" : ""}`,
       { method: "POST" },
     ),
+  /** One question, one constrained answer. Not a conversation: there is no thread to
+   *  resume, so each call stands alone. */
+  ask: (question: string, language: string) =>
+    request<AskAnswer>("/ask", { method: "POST", body: JSON.stringify({ question, language }) }),
+  /** The incident form's fields, from the published template version. */
+  incidentForm: () => request<IncidentForm>("/incidents/form"),
+  fileIncident: (answers: IncidentAnswerWrite[]) =>
+    request<IncidentReceipt>("/incidents", {
+      method: "POST",
+      body: JSON.stringify({ answers }),
+    }),
 };

@@ -195,3 +195,62 @@ export interface RunDetail {
   follow_ups_asked: Record<string, number>;
   summary: StoredRunSummary | null;
 }
+
+/* ── Shop-floor question service ─────────────────────────────────────────────── */
+
+export type AskTopic =
+  | "haccp"
+  | "fish_handling"
+  | "cold_chain"
+  | "hygiene"
+  | "allergens"
+  | "health_and_safety"
+  | "audits"
+  | "out_of_scope";
+
+export interface AskAnswer {
+  answer: string;
+  topic: AskTopic;
+  /** False when the question was not about the factory. The UI branches on this rather
+   *  than on the topic, because it is the flag the service guarantees is consistent. */
+  in_scope: boolean;
+  caveat: string | null;
+}
+
+/* ── Health and safety incident report ───────────────────────────────────────── */
+
+/** A field, exactly as the published template version defines it. The form is built
+ *  from these rather than from a hardcoded list, so republishing changes the form. */
+export interface IncidentQuestion {
+  id: string;
+  position: number;
+  text: string;
+  answer_type: AnswerType;
+  options: string[];
+  allow_other: boolean;
+  required: boolean;
+}
+
+export interface IncidentForm {
+  template_id: string;
+  version_id: string;
+  title: string;
+  description: string | null;
+  questions: IncidentQuestion[];
+}
+
+/** What a single field can carry. The backend validates it against the question's
+ *  answer type, so this is deliberately the union of the shapes it accepts. */
+export type IncidentValue = string | number | boolean | string[];
+
+export interface IncidentAnswerWrite {
+  question_id: string;
+  value: IncidentValue;
+}
+
+export interface IncidentReceipt {
+  run_id: string;
+  /** Short enough to read down a radio, still unique on site. */
+  reference: string;
+  submitted_at: string;
+}

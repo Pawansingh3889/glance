@@ -22,7 +22,7 @@ export default function RunPage() {
   // Conducting is participant-only; a creator following a run link is sent to Build.
   const isCreator = currentUser?.role === "creator";
   useEffect(() => {
-    if (isCreator) router.replace("/");
+    if (isCreator) router.replace("/templates");
   }, [isCreator, router]);
 
   if (isCreator) {

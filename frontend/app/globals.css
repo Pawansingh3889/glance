@@ -1,33 +1,111 @@
+/* Harbourline — food safety, HACCP and health-and-safety surveys.
+ *
+ * The palette is built for the domain: a deep harbour navy as the ink, a bright cyan
+ * pulled off cold water for accents, and the two colours a factory floor already reads
+ * without a legend — hazard amber for health and safety, a clean green for "in spec".
+ * Token *names* are unchanged from the previous theme on purpose: every rule below and
+ * every component already refers to them, so re-pointing the values restyles the whole
+ * app rather than only the screens that got rewritten. */
 :root {
-  --deep: #23262b;
-  --mist: #eceef0;
-  --off: #f7f8f9;
+  --deep: #06232e;
+  --mist: #eef1f2;
+  --off: #f7f9f9;
   --white: #ffffff;
-  --cream: #eceef0;
-  --clay: #98a0a8;
-  --clay-lt: #c9ced3;
-  --grey: #636b73;
-  --teal: #9ec6e0;
-  --airforce: #3c5570;
-  --gold: #e2b23c;
-  --ember: #dfe4e8;
-  --line: rgba(35, 38, 43, 0.1);
-  --line2: rgba(35, 38, 43, 0.06);
+  --cream: #e8eef0;
+  --clay: #8fa3ab;
+  --clay-lt: #c2d0d5;
+  --grey: #5a6b73;
+  --teal: #35d6e8;
+  --airforce: #0e5a6b;
+  --gold: #f2b01e;
+  --ember: #dfe7ea;
+  --line: rgba(6, 35, 46, 0.12);
+  --line2: rgba(6, 35, 46, 0.07);
+
+  /* Landing-page scale. The app screens are dense by design; the public page is not,
+     so its type and rhythm are defined separately rather than by overriding the app's. */
+  --brand-deep: #06232e;
+  --brand-mid: #0e5a6b;
+  --accent: #00c2d7;
+  /* Darker than it looks like it needs to be: the 10.5px uppercase card tags use this
+     on white, and the lighter cyan it replaced reached only 3.83:1 against AA's 4.5. */
+  --accent-deep: #007a87;
+  --hazard: #f2b01e;
+  --fresh: #12a06a;
+  --critical: #d4432b;
+  --ink-on-accent: #04252c;
   --warn-fill: #fdf3d9;
   --warn-text: #7a4a06;
   --warn-border: rgba(122, 74, 6, 0.25);
   --err-fill: #fadbd5;
   --err-text: #8a2c18;
   --err-border: rgba(138, 44, 24, 0.25);
-  --ai-fill: #e9eef5;
-  --ai-border: rgba(60, 85, 112, 0.2);
+  --ai-fill: #e4f6f8;
+  --ai-border: rgba(14, 90, 107, 0.22);
   /* Secondary text on a light background. --clay is the right *weight* for this but
      only reaches 2.6:1 on white, well under the 4.5:1 WCAG AA wants for body text —
      it stays the choice on the dark top bar, where it sits at ~5.9:1. */
-  --muted-ink: #5c646d;
-  --radius: 8px;
-  --shadow-card: 0 1px 2px rgba(35, 38, 43, 0.04), 0 8px 24px rgba(35, 38, 43, 0.06);
+  --muted-ink: #55666e;
+  --radius: 6px;
+  --shadow-card: 0 1px 2px rgba(6, 35, 46, 0.05), 0 8px 24px rgba(6, 35, 46, 0.07);
+  --shadow-lift: 0 2px 4px rgba(6, 35, 46, 0.06), 0 12px 32px rgba(6, 35, 46, 0.1);
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* One step lighter than --deep, for the primary button's hover. The button had no
+     hover state at all, which on the most-pressed control in the app read as dead. */
+  --deep-hover: #0d3a49;
+  /* The focus ring on a field, as a shadow rather than a thicker border: growing the
+     border by a pixel reflows the field and nudges everything beside it. */
+  --ring: 0 0 0 3px rgba(53, 214, 232, 0.24);
+
+  /* ── motion ──────────────────────────────────────────────────────────────────
+     Durations and easings are tokens for the same reason the colours are. Six
+     hand-written timings (200ms, 180ms, 0.18s, 0.2s, 0.15s, 0.55s) had already
+     drifted apart across this file, and mismatched timing is what reads as unpolished
+     when nobody can point at why.
+
+     Three durations cover everything here. The distinction is what the motion is *for*:
+     a state you should barely notice changing, a thing arriving that you should, and
+     the one deliberate reveal a screen gets. Anything slower than --dur-3 stops being
+     feedback and starts being a wait. */
+  --dur-1: 120ms; /* hover, focus, press — the UI answering you */
+  --dur-2: 220ms; /* something entering or leaving */
+  --dur-3: 420ms; /* a once-per-screen reveal */
+  /* Decelerating: quick to start, settling at the end — how something already in motion
+     comes to rest. That is why it belongs on entrances and not on colour swaps. */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* Symmetric, for changes that are not arrivals: a colour, a border, an opacity. */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── spacing ─────────────────────────────────────────────────────────────────
+     A 4px base, because every gap and padding already written below is a multiple of
+     it. Naming the steps is what stops the next one being 15px.
+
+     Only the steps actually in use are named. A scale that runs further than the file
+     reaches is a list of things to guess between, and the unused half is the half that
+     goes stale — extend it when something needs the next step, not before. */
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+}
+
+/* One guard for the whole stylesheet, rather than a bespoke opt-out beside each
+   animation. The per-component version was already incomplete — it covered three rules
+   out of a dozen — and it fails in the direction that matters: forget it once and
+   somebody with a vestibular disorder gets the animation anyway.
+
+   Durations collapse to a near-zero value instead of `none` so that transitionend and
+   animationend still fire; anything waiting on those events keeps working. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 * {
@@ -161,21 +239,31 @@ select {
 .app-main {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 24px 20px 60px;
+  /* Fluid side padding. A fixed 20px is right on a desktop and expensive on a 360px
+     phone, where it spends a ninth of the usable width on margin — which is the width
+     the long survey titles and question text actually need. */
+  padding: var(--s-5) clamp(14px, 4vw, 20px) 60px;
 }
 .page {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
+/* Wraps, because the right-hand side is a button with a translated label: "New template"
+   is 13 characters in English and 21 in Romanian, and without this the title and the
+   button squeeze each other rather than stacking. The row gap only applies once wrapped,
+   so nothing changes on a wide screen. */
 .page-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s-3);
 }
 .page-head-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .page-head h1 {
@@ -193,6 +281,10 @@ select {
   color: var(--muted-ink);
   font-style: italic;
 }
+/* An error appears where there was nothing, usually below the control you just used and
+   often below the fold of your attention. Arriving with a movement is what gets it
+   noticed; `rise` is the same keyframe the chat bubbles use, because this is the same
+   event — something the app is saying back to you. */
 .error-text {
   color: var(--err-text);
   background: var(--err-fill);
@@ -200,6 +292,7 @@ select {
   border-radius: 9px;
   padding: 8px 12px;
   font-size: 12.5px;
+  animation: rise var(--dur-2) var(--ease-out) both;
 }
 
 .card {
@@ -223,6 +316,22 @@ select {
   font-size: 12.5px;
   font-weight: 600;
   border: 1px solid transparent;
+  /* Named properties, not `all`. Transitioning everything means the browser watches
+     every animatable property on every button, and it catches things you never meant
+     to animate — a width change on text swap arrives as a slide. */
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease),
+    opacity var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+}
+/* 1px, and no more. On a floor tablet the finger covers the button, so the confirmation
+   that the press landed has to happen at the edges — but anything larger reads as the
+   layout shifting. Excluded when disabled: a control that moves when pressed is telling
+   you it worked. */
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 .btn:disabled {
   opacity: 0.5;
@@ -232,20 +341,34 @@ select {
   background: var(--deep);
   color: var(--white);
 }
+.btn-primary:hover:not(:disabled) {
+  background: var(--deep-hover);
+}
 .btn-secondary {
   background: var(--white);
   border-color: var(--line);
   color: var(--deep);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--off);
+  border-color: var(--clay-lt);
 }
 .btn-ai {
   background: var(--white);
   border-color: var(--teal);
   color: var(--airforce);
 }
+.btn-ai:hover:not(:disabled) {
+  background: var(--ai-fill);
+}
 .btn-danger {
   background: var(--err-fill);
   border-color: var(--err-border);
   color: var(--err-text);
+}
+.btn-danger:hover:not(:disabled) {
+  background: #f6cdc4;
+  border-color: var(--err-text);
 }
 /* Destructive actions stay quiet until asked for, then commit in the error palette. */
 .btn-quiet {
@@ -263,10 +386,26 @@ select {
   border-radius: 9px;
   padding: 8px 10px;
 }
-.field:focus {
+/* Every text input in the app focuses the same way, so it is described once. Four rules
+   were saying this separately, which is three chances for them to disagree — and two of
+   them already had, on the ring the others did not draw. */
+.field,
+.generate-card textarea,
+.builder-title,
+.qa-input {
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease),
+    box-shadow var(--dur-1) var(--ease);
+}
+.field:focus,
+.generate-card textarea:focus,
+.builder-title:focus,
+.qa-input:focus {
   outline: none;
   background: var(--white);
   border-color: var(--teal);
+  box-shadow: var(--ring);
 }
 textarea {
   resize: vertical;
@@ -280,11 +419,6 @@ textarea {
   border-radius: 9px;
   padding: 10px;
   min-height: 72px;
-}
-.generate-card textarea:focus {
-  outline: none;
-  background: var(--white);
-  border-color: var(--teal);
 }
 .generate-actions {
   display: flex;
@@ -301,16 +435,32 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* The title can be long and the pill must never be squashed or wrapped onto it. */
+  gap: var(--s-3);
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 14px 16px;
+  transition:
+    border-color var(--dur-1) var(--ease),
+    box-shadow var(--dur-1) var(--ease);
 }
+/* The whole row is a link, so it needs to say so before it is clicked. A border and a
+   shadow, not a transform: these sit in a tight vertical list, and a row that lifts
+   pushes against its neighbours. */
 .template-row:hover {
   border-color: var(--clay-lt);
+  box-shadow: var(--shadow-card);
+}
+/* min-width: 0 so a long title wraps inside the row instead of forcing it wider than
+   the page — a flex item's default min-width is its content, which is what lets one
+   unbroken string blow out the whole list. */
+.template-row > div {
+  min-width: 0;
 }
 .template-title {
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 .template-meta {
   color: var(--grey);
@@ -357,10 +507,16 @@ textarea {
   flex-direction: column;
   gap: 12px;
 }
+/* The title is a full-width input and the actions are a wrapping button group; below
+   about 700px they cannot share a line without the input becoming unusably narrow. */
 .builder-head {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
+}
+.builder-head .builder-title {
+  min-width: 240px;
 }
 .builder-title {
   flex: 1;
@@ -370,11 +526,6 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 9px;
   padding: 8px 10px;
-}
-.builder-title:focus {
-  outline: none;
-  background: var(--white);
-  border-color: var(--teal);
 }
 .builder-actions {
   display: flex;
@@ -474,9 +625,18 @@ textarea {
   color: var(--grey);
   display: grid;
   place-items: center;
+  transition:
+    border-color var(--dur-1) var(--ease),
+    background-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease),
+    opacity var(--dur-1) var(--ease);
 }
-.icon-btn:hover {
+/* These are 26px and unlabelled, so the hover is doing real work — it is the only
+   confirmation you are on the right one before you commit. */
+.icon-btn:hover:not(:disabled) {
   border-color: var(--clay-lt);
+  background: var(--off);
+  color: var(--deep);
 }
 .icon-btn:disabled {
   opacity: 0.35;
@@ -531,6 +691,14 @@ select.field {
   color: var(--airforce);
   background: transparent;
   font-weight: 600;
+  transition:
+    border-color var(--dur-1) var(--ease),
+    background-color var(--dur-1) var(--ease);
+}
+.add-dashed:hover,
+.add-question:hover {
+  border-color: var(--airforce);
+  background: var(--ai-fill);
 }
 .add-dashed {
   border-radius: 9px;
@@ -574,6 +742,13 @@ select.field {
   font-size: 11px;
   font-weight: 600;
   color: var(--grey);
+  transition:
+    background-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease),
+    box-shadow var(--dur-1) var(--ease);
+}
+.segmented button:hover:not(.active) {
+  color: var(--deep);
 }
 .segmented button.active {
   background: var(--white);
@@ -608,6 +783,14 @@ select.field {
   color: var(--airforce);
   font-size: 11.5px;
   padding: 4px 10px;
+  transition:
+    border-color var(--dur-1) var(--ease),
+    background-color var(--dur-1) var(--ease),
+    opacity var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+}
+.chip:active:not(:disabled) {
+  transform: translateY(1px);
 }
 .chip-dashed {
   border-style: dashed;
@@ -649,6 +832,7 @@ select.field {
 }
 .topbar-nav a {
   color: var(--clay);
+  transition: color var(--dur-1) var(--ease);
 }
 .topbar-nav a:hover {
   color: var(--cream);
@@ -663,7 +847,8 @@ select.field {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -681,7 +866,8 @@ select.field {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
 }
 .chat-progress {
   font-size: 11px;
@@ -703,7 +889,9 @@ select.field {
   display: block;
   height: 100%;
   background: var(--teal);
-  transition: width 200ms ease;
+  /* --dur-2 rather than --dur-1: this one is not feedback on a press, it is the survey
+     telling you that you got somewhere, and it is worth watching move. */
+  transition: width var(--dur-2) var(--ease-out);
 }
 
 .chat-thread {
@@ -723,7 +911,7 @@ select.field {
   line-height: 1.6;
   max-width: 82%;
   white-space: pre-wrap;
-  animation: rise 180ms ease both;
+  animation: rise var(--dur-2) var(--ease-out) both;
 }
 .bubble-assistant {
   align-self: flex-start;
@@ -735,6 +923,10 @@ select.field {
   border-radius: 12px;
   padding: 8px 12px;
 }
+/* Shared, despite living in the chat section — errors, notices and the answer panel use
+   it too. One keyframe for "this just arrived" is the point: three near-identical ones
+   drift, and the difference between a 4px rise and a 6px rise is not worth a second
+   definition. */
 @keyframes rise {
   from {
     opacity: 0;
@@ -776,15 +968,14 @@ select.field {
   }
 }
 
+/* The blanket guard at the top of this file stops the loop after one pass, but `blink`
+   ends at 0.3 opacity — so the dots would freeze half-faded and read as broken rather
+   than as waiting. This is the one animation that needs its own opt-out: it has to be
+   cancelled outright, not shortened. */
 @media (prefers-reduced-motion: reduce) {
-  .bubble {
-    animation: none;
-  }
   .typing span {
     animation: none;
-  }
-  .progress-bar span {
-    transition: none;
+    opacity: 1;
   }
 }
 
@@ -808,6 +999,7 @@ select.field {
 }
 .chip:hover:not(:disabled) {
   border-color: var(--airforce);
+  background: var(--ai-fill);
 }
 .chip:disabled {
   opacity: 0.5;
@@ -825,9 +1017,19 @@ select.field {
   font-size: 21px;
   line-height: 1;
   padding: 0 1px;
+  transition:
+    color var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease-out);
 }
+/* The one place a scale is right: a star is a discrete target you are picking between
+   five of, and growing the one under the cursor says which is armed. It has no
+   neighbours to disturb — the row is already spaced for it. */
 .star:hover:not(:disabled) {
   color: var(--gold);
+  transform: scale(1.18);
+}
+.star:active:not(:disabled) {
+  transform: scale(1.04);
 }
 .star:disabled {
   opacity: 0.5;
@@ -875,12 +1077,23 @@ select.field {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 10px 12px;
+  transition:
+    border-color var(--dur-1) var(--ease),
+    background-color var(--dur-1) var(--ease),
+    box-shadow var(--dur-1) var(--ease);
 }
 .result-row:hover {
   border-color: var(--clay-lt);
+  background: var(--off);
 }
-.result-row-on {
+/* The selected row in the list, so it reads as current at a glance against the ones
+   that are merely hovered. The inset shadow thickens the left edge without changing the
+   border width, which would shift every other row in the list by a pixel. */
+.result-row-on,
+.result-row-on:hover {
   border-color: var(--teal);
+  background: var(--white);
+  box-shadow: inset 3px 0 0 var(--teal);
 }
 .result-name {
   font-weight: 700;
@@ -1046,6 +1259,7 @@ select.field {
   color: var(--warn-text);
   border: 1px solid var(--warn-border);
   font-size: 12.5px;
+  animation: rise var(--dur-2) var(--ease-out) both;
 }
 .link-btn {
   background: none;
@@ -1164,4 +1378,767 @@ select.field {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted-ink);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Incident report form (/report) and the question service (/ask)
+   ══════════════════════════════════════════════════════════════════════════════
+   Both are used on a shared floor tablet, often in gloves, so the hit targets here are
+   deliberately larger than the builder's — the builder is a desk tool, these are not. */
+
+.btn-lg {
+  padding: 12px 22px;
+  font-size: 14px;
+}
+
+/* ── incident report ─────────────────────────────────────────────────────────── */
+.rf-lede {
+  color: var(--muted-ink);
+  max-width: 64ch;
+}
+/* Not an error — an instruction that outranks the form itself. */
+.rf-urgent {
+  background: var(--warn-fill);
+  border: 1px solid var(--warn-border);
+  border-left: 4px solid var(--warn-text);
+  color: var(--warn-text);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-weight: 600;
+}
+.rf-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rf-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+.rf-optional {
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted-ink);
+}
+.rf-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+.rf-choices-stack {
+  flex-direction: column;
+  gap: 2px;
+}
+/* The whole row is the target, not just the 13px control. */
+.rf-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-inline: -10px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease);
+}
+.rf-choice:hover {
+  background: var(--off);
+}
+/* Focus lands on the 17px radio, but the whole row is the target, so the ring is drawn
+   around the row and suppressed on the control — otherwise a keyboard user gets two
+   concentric rings, and the inner one marks a hit area that is not the real one. */
+.rf-choice:has(input:focus-visible) {
+  outline: 2px solid var(--airforce);
+  outline-offset: 0;
+}
+.rf-choice input:focus-visible {
+  outline: none;
+}
+.rf-choice input {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  accent-color: var(--airforce);
+  cursor: pointer;
+}
+.rf-writein {
+  margin-top: 4px;
+  margin-inline-start: 27px;
+  max-width: 380px;
+}
+.rf-textarea {
+  min-height: 104px;
+}
+.rf-submit {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+/* ── filed receipt ───────────────────────────────────────────────────────────── */
+.rf-filed {
+  max-width: 520px;
+  margin: 40px auto;
+  text-align: center;
+  padding: 34px 28px;
+}
+/* The receipt is the end of the job: somebody reported a hazard and needs to believe it
+   landed. This is the one place in the app where motion is the message rather than a
+   nicety, so it gets a real gesture — and the slight overshoot past 1.0 is what makes it
+   read as confirmation instead of a fade. */
+.rf-filed-tick {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ai-fill);
+  color: var(--fresh);
+  font-size: 24px;
+  font-weight: 700;
+  animation: tick var(--dur-3) var(--ease-out) both;
+}
+@keyframes tick {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.rf-filed h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+.rf-filed-ref {
+  margin-top: 10px;
+  font-size: 15px;
+}
+.rf-filed-ref strong {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+}
+.rf-filed-note {
+  margin-top: 10px;
+  font-style: normal;
+}
+.rf-filed-actions {
+  justify-content: center;
+  margin-top: 22px;
+}
+
+/* ── ask ─────────────────────────────────────────────────────────────────────── */
+.qa-lede {
+  color: var(--muted-ink);
+  max-width: 68ch;
+}
+.qa-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qa-input {
+  width: 100%;
+  min-height: 76px;
+  background: var(--off);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 11px 12px;
+  font-size: 14.5px;
+}
+.qa-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.qa-hint {
+  font-size: 11.5px;
+  color: var(--muted-ink);
+}
+.qa-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.qa-chip {
+  border: 1px dashed var(--clay-lt);
+  background: var(--white);
+  text-align: left;
+  font-size: 13px;
+}
+/* Dashed to solid is the whole affordance: these are suggestions until you pick one.
+   border-style does not interpolate, so the colour and fill carry the transition and the
+   style flips at once — which is the honest way round, since a half-dashed border is
+   not a thing. */
+.qa-chip:hover {
+  border-style: solid;
+  border-color: var(--airforce);
+  color: var(--airforce);
+  background: var(--ai-fill);
+}
+.qa-pending {
+  border-style: dashed;
+}
+/* The answer is what the whole page is for, and it lands after a visible wait. --dur-3,
+   not --dur-2: this is the one arrival on the screen worth taking a moment over. */
+.qa-answer {
+  border-left: 4px solid var(--airforce);
+  animation: rise var(--dur-3) var(--ease-out) both;
+}
+/* An off-topic reply is a refusal, not an answer; it should not look like one. */
+.qa-answer-off {
+  border-left-color: var(--clay);
+  background: var(--off);
+}
+.qa-answer-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line2);
+}
+.qa-topic {
+  align-self: flex-start;
+  background: var(--ai-fill);
+  border: 1px solid var(--ai-border);
+  color: var(--airforce);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.qa-asked {
+  font-size: 15px;
+  font-weight: 700;
+}
+.qa-para {
+  font-size: 14.5px;
+  line-height: 1.62;
+}
+.qa-para + .qa-para {
+  margin-top: 12px;
+}
+.qa-caveat {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--warn-fill);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius);
+  color: var(--warn-text);
+  font-size: 13px;
+}
+.qa-foot {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line2);
+  font-size: 13px;
+  color: var(--muted-ink);
+}
+.qa-link {
+  color: var(--airforce);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Shared: language switcher, reveal animation, accessibility helpers
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.lang-select {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 7px 26px 7px 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  /* The chevron is a background image rather than an extra element, so the control stays
+     one focusable thing for a keyboard and a screen reader. */
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 14px) center, calc(100% - 9px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  transition: border-color var(--dur-1) var(--ease);
+}
+.lang-select:hover {
+  border-color: var(--clay);
+}
+/* On the dark top bar the light border and inherited colour both need flipping. */
+.lang-dark .lang-select {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: var(--cream);
+}
+.lang-dark .lang-select:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+}
+.lang-select option {
+  color: var(--deep);
+  background: var(--white);
+}
+
+/* Starts visible; Reveal only hides it once the observer is attached, so no-JS and
+   slow-hydration readers still get the content. */
+.reveal {
+  transition:
+    opacity var(--dur-3) var(--ease-out),
+    transform var(--dur-3) var(--ease-out);
+}
+.reveal:not(.reveal-in) {
+  opacity: 0;
+  transform: translateY(14px);
+}
+/* This one still needs saying, and it is not about duration. The hidden state is a
+   static `opacity: 0`, so shortening the transition would leave the content invisible
+   rather than revealing it instantly — the end state has to be forced too. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal:not(.reveal-in) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Sign-in gates (guest name form, Microsoft sign-in)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 20px;
+  background: var(--mist);
+}
+/* AuthGate renders a blank .boot shell for one frame while the persisted token is read
+   back, so the card genuinely appears rather than being there from the start. Fading it
+   in turns that unavoidable flash into something that looks intended. */
+.gate-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  animation: rise var(--dur-3) var(--ease-out) both;
+}
+.gate-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+/* The way back to the public site. Its absence is what stranded people here before. */
+.gate-back {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-ink);
+  transition: color var(--dur-1) var(--ease);
+}
+.gate-back:hover {
+  color: var(--airforce);
+}
+.gate-title {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.gate-sub {
+  margin-top: 8px;
+  color: var(--muted-ink);
+  font-size: 14px;
+}
+.gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+.gate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.gate-field > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.gate-optional {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted-ink);
+}
+.gate-field .field {
+  padding: 11px 12px;
+  font-size: 15px;
+}
+.gate-help {
+  font-size: 12px;
+  color: var(--muted-ink);
+  line-height: 1.45;
+}
+.gate-submit {
+  width: 100%;
+  justify-content: center;
+}
+.gate-ms {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.gate-note {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--warn-text);
+  background: var(--warn-fill);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.gate-note-quiet {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--muted-ink);
+  margin-top: 20px;
+}
+.gate-demo {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line2);
+}
+.gate-demo-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-ink);
+  margin-bottom: 10px;
+}
+.gate-demo-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Public landing page (/)
+   ══════════════════════════════════════════════════════════════════════════════
+   Two things only: what to do, and which door is yours. Scoped under .lp so none of it
+   reaches the app screens, which are dense by design and set their own scale. */
+
+.lp {
+  background: var(--white);
+  color: var(--deep);
+  font-size: 16px;
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.lp main {
+  flex: 1;
+}
+.lp h1,
+.lp h2 {
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+.lp-nav {
+  border-bottom: 1px solid var(--line);
+}
+.lp-nav-in,
+.lp-hero-in,
+.lp-paths-in,
+.lp-foot-in {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-inline: clamp(20px, 5vw, 32px);
+}
+.lp-nav-in {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 12px;
+  flex-wrap: wrap;
+}
+.lp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.lp-brand span {
+  color: var(--accent-deep);
+}
+/* A cold-water mark: the shape of a chilled hold. */
+.lp-mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: 5px;
+  background: linear-gradient(160deg, var(--accent) 0%, var(--brand-mid) 55%, var(--brand-deep) 100%);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35);
+}
+.lp-nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  padding: 10px 18px;
+  font-size: 14.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease),
+    color var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+}
+.lp-btn:active {
+  transform: translateY(1px);
+}
+.lp-btn-lg {
+  padding: 16px 30px;
+  font-size: 16.5px;
+}
+.lp-btn-ghost {
+  border-color: var(--line);
+  color: var(--deep);
+}
+.lp-btn-ghost:hover {
+  border-color: var(--brand-deep);
+}
+/* Amber carries dark ink, never white — white on this yellow is about 1.9:1. */
+.lp-btn-hazard {
+  background: var(--hazard);
+  color: var(--ink-on-accent);
+}
+.lp-btn-hazard:hover {
+  background: #ffc23f;
+}
+.lp-btn-outline {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: var(--white);
+}
+.lp-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--white);
+}
+
+.lp-hero {
+  background:
+    radial-gradient(760px 380px at 8% -20%, rgba(0, 194, 215, 0.2), transparent 62%),
+    var(--brand-deep);
+  color: var(--white);
+  padding-block: clamp(64px, 11vw, 128px);
+}
+.lp-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--teal);
+  margin-bottom: 22px;
+}
+.lp-hero h1 {
+  font-size: clamp(36px, 6.4vw, 68px);
+  font-weight: 800;
+  max-width: 16ch;
+}
+.lp-lede {
+  margin-top: 24px;
+  max-width: 52ch;
+  font-size: clamp(16px, 1.5vw, 19px);
+  color: rgba(255, 255, 255, 0.8);
+}
+.lp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 40px;
+}
+
+.lp-paths {
+  padding-block: clamp(56px, 9vw, 96px);
+  background: var(--off);
+}
+.lp-paths-in {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px;
+  align-items: stretch;
+}
+.lp-path {
+  display: flex;
+}
+.lp-path-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 30px 28px;
+  transition:
+    transform var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out);
+}
+/* These two sit side by side with real space around them, so a lift has room to happen
+   without crowding anything — unlike the stacked rows in the app, which is why they get
+   a shadow and these get movement. */
+.lp-path-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+  border-color: var(--clay-lt);
+}
+.lp-path-tag {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--brand-mid);
+}
+.lp-path-tag-floor {
+  color: #8a6206;
+}
+.lp-path-body {
+  color: var(--muted-ink);
+  font-size: 15px;
+}
+.lp-path-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.lp-inline-link {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent-deep);
+  transition: color var(--dur-1) var(--ease);
+}
+.lp-inline-link:hover {
+  color: var(--brand-deep);
+}
+
+.lp-foot {
+  background: var(--brand-deep);
+  color: rgba(255, 255, 255, 0.62);
+  padding-block: 36px;
+}
+.lp-foot-in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lp-brand-foot {
+  color: var(--white);
+}
+.lp-brand-foot span {
+  color: var(--teal);
+}
+.lp-foot-note {
+  font-size: 12.5px;
+  max-width: 58ch;
+}
+
+/* ── responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .lp-nav-in {
+    justify-content: space-between;
+  }
+  .lp-hero-actions .lp-btn {
+    flex: 1 1 100%;
+  }
+  .lp-btn-lg {
+    padding: 15px 22px;
+  }
+  .gate-card {
+    padding: 22px 18px;
+  }
+}
+
+/* The app top bar gains a right-hand group for the language switcher. */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .topbar-right .lang-select {
+    padding: 6px 22px 6px 8px;
+    font-size: 12px;
+  }
 }
