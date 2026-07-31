@@ -25,6 +25,18 @@ class UserRepository:
         result = await self.session.execute(select(User).where(User.email == email.strip().lower()))
         return result.scalar_one_or_none()
 
+    async def get_by_external_subject(self, external_subject: str) -> User | None:
+        """The account an identity provider's token belongs to.
+
+        Exact match, unlike email: this value is an opaque identifier the provider issued,
+        not something a person types, so folding or trimming it could only ever collide
+        two distinct subjects into one account.
+        """
+        result = await self.session.execute(
+            select(User).where(User.external_subject == external_subject)
+        )
+        return result.scalar_one_or_none()
+
     async def list_all(self) -> list[User]:
         result = await self.session.execute(select(User).order_by(User.display_name))
         return list(result.scalars().all())

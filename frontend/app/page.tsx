@@ -1,105 +1,103 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-import { useCreateTemplate, useCurrentUser, useGenerateTemplate, useTemplates } from "@/lib/queries";
-import { useDraftNoteStore } from "@/lib/store";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Reveal } from "@/components/Reveal";
+import { useI18n } from "@/lib/i18n";
 
-export default function Home() {
-  const currentUser = useCurrentUser();
-  const { data: templates, isLoading, error } = useTemplates();
-  const create = useCreateTemplate();
-  const generate = useGenerateTemplate();
-  const router = useRouter();
-  const [prompt, setPrompt] = useState("");
-  const setPendingNote = useDraftNoteStore((s) => s.setPendingNote);
-
-  // Build is creator-only on the backend; a participant landing here belongs on
-  // Respond, not on a page of 403s.
-  const isParticipant = currentUser?.role === "participant";
-  useEffect(() => {
-    if (isParticipant) router.replace("/respond");
-  }, [isParticipant, router]);
-
-  if (isParticipant) {
-    return <div className="empty">Taking you to Respond…</div>;
-  }
-
-  async function onCreate() {
-    const t = await create.mutateAsync({ title: "Untitled survey", questions: [] });
-    router.push(`/templates/${t.id}`);
-  }
-
-  async function onGenerate() {
-    if (!prompt.trim()) return;
-    const { template, note } = await generate.mutateAsync(prompt.trim());
-    // Hand the note to the builder, then drop straight into it with the questions.
-    if (note) setPendingNote(template.id, note);
-    router.push(`/templates/${template.id}`);
-  }
+/** The public front door.
+ *
+ *  Deliberately short. The previous version explained six standards, three steps, a
+ *  statistics band and a panel of sample findings — none of which the two people this
+ *  page actually serves need. They are: someone on shift who has to report something or
+ *  ask something, and a safety lead who needs to sign in. Everything here is one of
+ *  those two, and nothing else earned its place.
+ */
+export default function Landing() {
+  const { t } = useI18n();
 
   return (
-    <div className="page">
-      <div className="page-head">
-        <h1>Survey templates</h1>
-        <button className="btn btn-primary" onClick={onCreate} disabled={create.isPending}>
-          {create.isPending ? "Creating…" : "New template"}
-        </button>
-      </div>
-
-      {create.error ? (
-        <div className="error-text">{(create.error as Error).message}</div>
-      ) : null}
-
-      <div className="card generate-card">
-        <div className="card-label">✦ Draft with AI</div>
-        <textarea
-          placeholder="Describe the survey… e.g. An onboarding survey for factory staff: their role, the systems they use daily, and their biggest data frustrations."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
-        <div className="generate-actions">
-          <button
-            className="btn btn-ai"
-            onClick={onGenerate}
-            disabled={generate.isPending || !prompt.trim()}
-          >
-            {generate.isPending ? "Drafting…" : "✦ Generate draft"}
-          </button>
-        </div>
-        {generate.error ? (
-          <div className="error-text">{(generate.error as Error).message}</div>
-        ) : null}
-      </div>
-
-      {isLoading ? <div className="muted">Loading…</div> : null}
-      {error ? <div className="error-text">{(error as Error).message}</div> : null}
-
-      <div className="template-list">
-        {templates?.map((t) => (
-          <Link key={t.id} href={`/templates/${t.id}`} className="template-row">
-            <div>
-              <div className="template-title">{t.title}</div>
-              <div className="template-meta">
-                {t.question_count} question{t.question_count === 1 ? "" : "s"}
-                {" · edited "}
-                {new Date(t.updated_at).toLocaleString(undefined, {
-                  day: "numeric",
-                  month: "short",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-            </div>
-            <span className={`pill pill-${t.status}`}>{t.status}</span>
+    <div className="lp">
+      <header className="lp-nav">
+        <div className="lp-nav-in">
+          <Link href="/" className="lp-brand" aria-label="Harbourline">
+            <span className="lp-mark" aria-hidden="true" />
+            Harbour<span>line</span>
           </Link>
-        ))}
-        {templates && templates.length === 0 ? (
-          <div className="muted">No templates yet. Create one or draft with AI.</div>
-        ) : null}
-      </div>
+          <div className="lp-nav-cta">
+            <LanguageSwitcher />
+            <Link href="/templates" className="lp-btn lp-btn-ghost">
+              {t.nav.signIn}
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section className="lp-hero">
+          <div className="lp-hero-in">
+            <Reveal>
+              <p className="lp-eyebrow">{t.landing.eyebrow}</p>
+              <h1>{t.landing.heroTitle}</h1>
+              <p className="lp-lede">{t.landing.heroBody}</p>
+            </Reveal>
+
+            <Reveal delay={120}>
+              <div className="lp-hero-actions">
+                <Link href="/report" className="lp-btn lp-btn-hazard lp-btn-lg">
+                  {t.landing.reportCta}
+                </Link>
+                <Link href="/ask" className="lp-btn lp-btn-outline lp-btn-lg">
+                  {t.landing.askCta}
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* The only other thing the page says: which of the two doors is yours. */}
+        <section className="lp-paths">
+          <div className="lp-paths-in">
+            <Reveal className="lp-path">
+              <div className="lp-path-card">
+                <span className="lp-path-tag lp-path-tag-floor">{t.landing.staffTitle}</span>
+                <p className="lp-path-body">{t.landing.staffBody}</p>
+                <div className="lp-path-links">
+                  <Link href="/report" className="lp-inline-link">
+                    {t.landing.reportCta} →
+                  </Link>
+                  <Link href="/ask" className="lp-inline-link">
+                    {t.landing.askCta} →
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={100} className="lp-path">
+              <div className="lp-path-card">
+                <span className="lp-path-tag">{t.landing.managerTitle}</span>
+                <p className="lp-path-body">{t.landing.managerBody}</p>
+                <div className="lp-path-links">
+                  <Link href="/templates" className="lp-inline-link">
+                    {t.landing.managerCta} →
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </main>
+
+      <footer className="lp-foot">
+        <div className="lp-foot-in">
+          <p className="lp-brand lp-brand-foot">
+            <span className="lp-mark" aria-hidden="true" />
+            Harbour<span>line</span>
+          </p>
+          <p className="lp-foot-note">{t.landing.footerNote}</p>
+        </div>
+      </footer>
     </div>
   );
 }

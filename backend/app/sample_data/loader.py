@@ -28,9 +28,13 @@ _BASE = datetime(2026, 7, 20, 9, 0, 0, tzinfo=UTC)
 
 async def load_sample_data(session: AsyncSession) -> tuple[int, int]:
     """Insert any missing sample surveys and runs. Returns (surveys_added, runs_added)."""
+    # Keyed by email local-part, so guest participants — who have no email — are simply
+    # not in the map. The fixtures only ever refer to seeded users, and a fixture naming
+    # a key that is absent raises in _user() rather than silently binding to a guest.
     users = {
         user.email.split("@", 1)[0]: user.id
         for user in (await session.execute(select(User))).scalars()
+        if user.email is not None
     }
 
     surveys_added = 0

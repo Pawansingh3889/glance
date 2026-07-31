@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useI18n } from "@/lib/i18n";
 import { useCurrentUser, useSignOut } from "@/lib/queries";
+
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 /** First letters of the display name, for the identity badge. Two words give two
  *  initials; anything else gives one, because "Remy" as "RE" reads like an acronym. */
@@ -17,46 +20,59 @@ export function TopBar() {
   const user = useCurrentUser();
   const signOut = useSignOut();
   const pathname = usePathname();
+  const { t } = useI18n();
 
   // The nav follows the signed-in role: Build is creator-only on the backend, so
   // offering it to a participant only leads to a 403.
   const isCreator = user?.role === "creator";
-  const home = isCreator ? "/" : "/respond";
+  const home = isCreator ? "/templates" : "/respond";
 
   return (
     <header className="topbar">
       <div className="topbar-left">
         <Link href={home} className="topbar-brand">
-          Survey <span>Service</span>
+          Harbour<span>line</span>
         </Link>
         <nav className="topbar-nav" aria-label="Main">
           {/* Roles don't cross: creators build, participants answer. */}
           {isCreator ? (
-            <Link href="/" aria-current={pathname === "/" ? "page" : undefined}>
-              Build
+            <Link href="/templates" aria-current={pathname === "/templates" ? "page" : undefined}>
+              {t.nav.build}
             </Link>
           ) : (
             <Link href="/respond" aria-current={pathname === "/respond" ? "page" : undefined}>
-              Respond
+              {t.nav.respond}
             </Link>
           )}
+          {/* Both of these cross the role line, unlike Build and Respond: a line leader
+              finding an unsafe condition files the same report an operative does, and
+              both ask the same questions. */}
+          <Link href="/report" aria-current={pathname === "/report" ? "page" : undefined}>
+            {t.nav.report}
+          </Link>
+          <Link href="/ask" aria-current={pathname === "/ask" ? "page" : undefined}>
+            {t.nav.ask}
+          </Link>
         </nav>
       </div>
 
-      {user ? (
-        <div className="topbar-user">
-          <span className="topbar-avatar" aria-hidden="true">
-            {initials(user.display_name)}
-          </span>
-          <span className="topbar-identity">
-            <span className="topbar-name">{user.display_name}</span>
-            <span className="topbar-role">{user.role}</span>
-          </span>
-          <button className="btn btn-ghost" onClick={signOut}>
-            Sign out
-          </button>
-        </div>
-      ) : null}
+      <div className="topbar-right">
+        <LanguageSwitcher className="lang-dark" />
+        {user ? (
+          <div className="topbar-user">
+            <span className="topbar-avatar" aria-hidden="true">
+              {initials(user.display_name)}
+            </span>
+            <span className="topbar-identity">
+              <span className="topbar-name">{user.display_name}</span>
+              <span className="topbar-role">{user.role}</span>
+            </span>
+            <button className="btn btn-ghost" onClick={signOut}>
+              {t.nav.signOut}
+            </button>
+          </div>
+        ) : null}
+      </div>
     </header>
   );
 }

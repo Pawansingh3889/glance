@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "./api";
 import { useAuthStore } from "./store";
-import type { Credentials, RunDetail, TemplateWrite } from "./types";
+import type { Credentials, IncidentAnswerWrite, RunDetail, TemplateWrite } from "./types";
 
 /** The signed-in user's id, or null. Every query below is keyed on it so one account's
  *  cached data can never be shown to the next one after a sign-out and sign-in. */
@@ -202,5 +202,85 @@ export function useSendRunMessage(id: string) {
     mutationFn: (content: string) => api.sendRunMessage(id, content),
     // The turn returns the whole updated run, so seed the cache rather than refetch it.
     onSuccess: (run) => qc.setQueryData(["run", id, userId], run),
+  });
+}
+
+/** Ask the shop-floor assistant a question. A mutation rather than a query: it is an
+ *  action the user takes, it spends provider tokens, and it must never be re-run
+ *  automatically on a refocus or a retry. */
+export function useAsk() {
+  return useMutation({
+    mutationFn: ({ question, language }: { question: string; language: string }) =>
+      api.ask(question, language),
+  });
+}
+
+/** The incident form's fields. Cached for the session — the published version only
+ *  changes when someone republishes the template. */
+export function useIncidentForm() {
+  const userId = useCurrentUserId();
+  return useQuery({
+    queryKey: ["incident-form", userId],
+    queryFn: () => api.incidentForm(),
+    enabled: Boolean(userId),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useFileIncident() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (answers: IncidentAnswerWrite[]) => api.fileIncident(answers),
+    // A filed report is a completed run against the incident template, so anything
+    // listing that template's runs is now stale.
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["template-runs"] }),
+  });
+}
+
+/** Admit a participant who has no account. Mirrors useSignIn's token handling exactly —
+ *  the token is only kept once we can say who it belongs to. */
+export function useStartGuest() {
+  const qc = useQueryClient();
+  const signIn = useAuthStore((s) => s.signIn);
+  return useMutation({
+    mutationFn: async ({ name, email }: { name: string; email?: string }) => {
+      const { access_token } = await api.startGuest(name, email);
+      useAuthStore.setState({ token: access_token });
+      try {
+        return { token: access_token, user: await api.me() };
+      } catch (error) {
+        useAuthStore.getState().signOut();
+        throw error;
+      }
+    },
+    onSuccess: ({ token, user }) => {
+      qc.clear();
+      signIn(token, user);
+    },
+  });
+}
+
+/** Adopt a token an identity provider issued. Unlike useSignIn there are no credentials
+ *  to exchange — MSAL has already done that — so this only has to establish who the
+ *  token belongs to, which the backend answers from the token itself. */
+export function useSignInWithToken() {
+  const qc = useQueryClient();
+  const signIn = useAuthStore((s) => s.signIn);
+  return useMutation({
+    mutationFn: async (accessToken: string) => {
+      useAuthStore.setState({ token: accessToken });
+      try {
+        return { token: accessToken, user: await api.me() };
+      } catch (error) {
+        // A token we cannot attribute is worse than none: it looks signed in and 401s
+        // on every page.
+        useAuthStore.getState().signOut();
+        throw error;
+      }
+    },
+    onSuccess: ({ token, user }) => {
+      qc.clear();
+      signIn(token, user);
+    },
   });
 }

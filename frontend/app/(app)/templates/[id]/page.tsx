@@ -125,7 +125,7 @@ export default function BuilderPage({ params }: { params: Promise<{ id: string }
       // Rendered from update.error / publish.error below.
     }
   };
-  const onDelete = () => remove.mutate(undefined, { onSuccess: () => router.push("/") });
+  const onDelete = () => remove.mutate(undefined, { onSuccess: () => router.push("/templates") });
   const onRefine = async () => {
     const text = instruction.trim();
     if (!text) return;

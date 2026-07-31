@@ -334,5 +334,144 @@
         "description": "Help us understand your team's dynamics and challenges. "
       }
     }
+  },
+  {
+    "key": "hs-incident",
+    "template_id": "a8439cef-cc17-5c28-b1cc-6c0cd0948cf3",
+    "title": "Health and Safety Incident Report",
+    "description": "Report an injury, near miss or unsafe condition on site.",
+    "created_by": "arjun",
+    "version": {
+      "version_id": "2bd326a4-ab31-5d95-8fb1-b8fda7082bcc",
+      "number": 1,
+      "published_by": "arjun",
+      "definition": {
+        "title": "Health and Safety Incident Report",
+        "questions": [
+          {
+            "id": "a7e47b6c-2d28-52ec-8d9f-18445ff5fae2",
+            "text": "When did it happen?",
+            "options": [],
+            "position": 0,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "date",
+            "allow_follow_ups": false
+          },
+          {
+            "id": "ef4fecac-f416-5cbb-95bb-59aa2e406d72",
+            "text": "Which area or line was it in?",
+            "options": [
+              "Intake / landing",
+              "Filleting",
+              "Grading and weighing",
+              "Packing",
+              "Cold store",
+              "Blast freezer",
+              "Dispatch",
+              "Yard and external",
+              "Workshop / engineering"
+            ],
+            "position": 1,
+            "required": true,
+            "allow_other": true,
+            "answer_type": "single_select",
+            "allow_follow_ups": true
+          },
+          {
+            "id": "47282484-404c-5822-9b80-b34ea4fc71e4",
+            "text": "What kind of event was it?",
+            "options": [
+              "Near miss",
+              "Injury",
+              "Ill health",
+              "Damage to plant or equipment",
+              "Environmental / refrigerant release"
+            ],
+            "position": 2,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "single_select",
+            "allow_follow_ups": true
+          },
+          {
+            "id": "a88b448a-6593-5b0b-9b6d-f0dd5d79d065",
+            "text": "How severe was it?",
+            "options": [
+              "No treatment needed",
+              "First aid only",
+              "Medical treatment",
+              "Lost-time injury",
+              "Potentially RIDDOR reportable"
+            ],
+            "position": 3,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "single_select",
+            "allow_follow_ups": true
+          },
+          {
+            "id": "cd6e03b9-68c5-5023-af49-6a2f6eab566e",
+            "text": "What happened? Describe it in your own words.",
+            "options": [],
+            "position": 4,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "long_text",
+            "allow_follow_ups": true
+          },
+          {
+            "id": "c75bc07f-fdb0-50d7-8563-27c5d355d7a4",
+            "text": "What PPE was being worn at the time?",
+            "options": [
+              "Cut-resistant gloves",
+              "Chainmail glove or apron",
+              "Wellingtons / non-slip footwear",
+              "Hairnet and beard snood",
+              "Eye protection",
+              "Hearing protection",
+              "Cold-store jacket",
+              "None of these"
+            ],
+            "position": 5,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "multi_select",
+            "allow_follow_ups": false
+          },
+          {
+            "id": "31a5f692-fe26-5fa5-a949-b96c09943e95",
+            "text": "Was anyone hurt?",
+            "options": [],
+            "position": 6,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "yes_no",
+            "allow_follow_ups": true
+          },
+          {
+            "id": "1ae5aedf-6165-55f3-b61e-3ce2ff03e137",
+            "text": "What was done straight away?",
+            "options": [],
+            "position": 7,
+            "required": true,
+            "allow_other": false,
+            "answer_type": "long_text",
+            "allow_follow_ups": false
+          },
+          {
+            "id": "9ea79969-16fe-5be5-bd7a-cb73c0c43614",
+            "text": "What would stop this happening again?",
+            "options": [],
+            "position": 8,
+            "required": false,
+            "allow_other": false,
+            "answer_type": "long_text",
+            "allow_follow_ups": true
+          }
+        ],
+        "description": "Report an injury, near miss or unsafe condition on site."
+      }
+    }
   }
 ]
