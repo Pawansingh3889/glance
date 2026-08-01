@@ -40,6 +40,13 @@ export function TopBar() {
               Respond
             </Link>
           )}
+          {/* Discussing a document is orthogonal to survey roles — open to both. */}
+          <Link
+            href="/documents"
+            aria-current={pathname.startsWith("/documents") ? "page" : undefined}
+          >
+            Documents
+          </Link>
         </nav>
       </div>
 

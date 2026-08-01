@@ -2,12 +2,14 @@ import { useAuthStore } from "./store";
 import type {
   AuthToken,
   Credentials,
+  DocumentSummary,
   GeneratedTemplate,
   Run,
   ResumableRun,
   RunDetail,
   RunSummary,
   RunSummaryContent,
+  SessionDocument,
   Template,
   TemplateSummary,
   TemplateVersion,
@@ -93,6 +95,25 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
+/** For multipart uploads: same auth header and error handling as `request`, but no
+ *  `Content-Type` — the browser must set that itself, with the multipart boundary
+ *  `FormData` generates, which a hardcoded `application/json` header would break. */
+async function requestForm<T>(path: string, form: FormData): Promise<T> {
+  const auth = authHeaders();
+  const res = await fetch(`${BASE}/api/v1${path}`, { method: "POST", headers: auth, body: form });
+  if (!res.ok) {
+    discardTokenIfRejected(res.status, "Authorization" in auth);
+    let message = res.statusText;
+    try {
+      message = errorMessage(await res.json(), message);
+    } catch {
+      // non-JSON error body; keep the status text
+    }
+    throw new ApiError(message, res.status);
+  }
+  return (await res.json()) as T;
+}
+
 /** For file downloads: same auth header, but the raw Response instead of parsed JSON. */
 async function rawRequest(path: string): Promise<Response> {
   const auth = authHeaders();
@@ -149,4 +170,18 @@ export const api = {
       `/templates/${templateId}/runs/${runId}/summary${refresh ? "?refresh=true" : ""}`,
       { method: "POST" },
     ),
+  listDocuments: () => request<DocumentSummary[]>("/documents"),
+  getDocument: (id: string) => request<SessionDocument>(`/documents/${id}`),
+  uploadDocument: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return requestForm<SessionDocument>("/documents", form);
+  },
+  fetchDocumentUrl: (url: string) =>
+    request<SessionDocument>("/documents/fetch", { method: "POST", body: JSON.stringify({ url }) }),
+  sendDocumentMessage: (id: string, content: string) =>
+    request<SessionDocument>(`/documents/${id}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ content }),
+    }),
 };

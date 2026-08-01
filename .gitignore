@@ -13,6 +13,9 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
+# Local document storage (DOCUMENTS_STORAGE_PATH default) — see app/documents/storage.py
+backend/data/
+
 # Node / Next.js
 node_modules/
 .next/

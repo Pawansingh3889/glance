@@ -61,3 +61,11 @@ def reply(text: str) -> ToolTurn:
 
 def move_on(say: str = "Next question.") -> ToolTurn:
     return ToolTurn(text=say, tool_name="move_on", tool_input={})
+
+
+def document_answer(answer: str, citations: list[dict[str, Any]] | None = None) -> ToolTurn:
+    return ToolTurn(
+        text="",
+        tool_name="respond_with_citations",
+        tool_input={"answer": answer, "citations": citations or []},
+    )

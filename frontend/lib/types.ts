@@ -195,3 +195,70 @@ export interface RunDetail {
   follow_ups_asked: Record<string, number>;
   summary: StoredRunSummary | null;
 }
+
+// --- documents (the "discuss this document" session path) ---------------------
+
+export type DocumentSourceType = "upload" | "url";
+export type DocumentStatus = "pending" | "parsing" | "ready" | "failed";
+
+/** One paragraph/heading/etc. from the parsed document, in reading order. `heading` is
+ *  the section it falls under (repeated on every block in that section, not just the
+ *  first — see the backend's render_for_prompt for why: it's how the group label is
+ *  known without re-deriving it here). */
+export interface DocumentSection {
+  heading: string | null;
+  page: number | null;
+  text: string;
+  kind: string;
+}
+
+export interface DocumentTable {
+  heading: string | null;
+  page: number | null;
+  markdown: string;
+}
+
+export interface ParsedContent {
+  sections: DocumentSection[];
+  tables: DocumentTable[];
+  page_count: number | null;
+}
+
+export interface Citation {
+  quote: string;
+  page: number | null;
+  section: string | null;
+}
+
+export interface DocumentMessage {
+  id: string;
+  role: MessageRole;
+  content: string;
+  citations: Citation[];
+  created_at: string;
+}
+
+/** The list view — no parsed_content, so listing stays cheap. */
+export interface DocumentSummary {
+  id: string;
+  title: string;
+  source_type: DocumentSourceType;
+  status: DocumentStatus;
+  created_at: string;
+  expires_at: string;
+}
+
+export interface SessionDocument {
+  id: string;
+  title: string;
+  source_type: DocumentSourceType;
+  source_url: string | null;
+  content_type: string;
+  status: DocumentStatus;
+  extraction_quality: number | null;
+  parsed_content: ParsedContent | null;
+  error_message: string | null;
+  created_at: string;
+  expires_at: string;
+  messages: DocumentMessage[];
+}

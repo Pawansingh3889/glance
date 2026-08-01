@@ -20,6 +20,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from app.db.base import Base
+from app.documents import models as _documents  # noqa: F401  (register tables on metadata)
 from app.runs import models as _runs  # noqa: F401  (register tables on metadata)
 from app.templates import models as _templates  # noqa: F401
 from app.templates.enums import AnswerType
@@ -111,7 +112,12 @@ def fake_llm(monkeypatch):
 
     def install(*turns):
         llm = FakeLLM(*turns)
-        for module in ("app.conduct.engine", "app.templates.generation", "app.runs.summary"):
+        for module in (
+            "app.conduct.engine",
+            "app.templates.generation",
+            "app.runs.summary",
+            "app.documents.chat",
+        ):
             monkeypatch.setattr(f"{module}.get_llm", lambda _llm=llm: _llm)
         return llm
 

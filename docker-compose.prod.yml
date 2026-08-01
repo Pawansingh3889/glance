@@ -114,6 +114,7 @@ services:
       LLM_TIER3_API_KEY: ${LLM_TIER3_API_KEY:-}
       LLM_TIER3_MODEL: ${LLM_TIER3_MODEL:-llama3.2:3b}
       LLM_TIER3_TIMEOUT_SECONDS: ${LLM_TIER3_TIMEOUT_SECONDS:-300}
+      DOCUMENTS_STORAGE_PATH: /data/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -121,6 +122,8 @@ services:
         condition: service_completed_successfully
     ports:
       - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - documents_data:/data/uploads
     # No source bind mount: the image is what runs, so what was tested is what ships.
     # Migrations still apply on start — the schema must match the code that ships with
     # it — but `python -m app.seed` does not. Seeding is idempotent, which is why it is
@@ -148,3 +151,4 @@ volumes:
   # Model weights are several GB; a named volume keeps them across `compose down` so
   # the pull happens once rather than on every restart.
   ollama:
+  documents_data:

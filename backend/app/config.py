@@ -94,6 +94,34 @@ class Settings(BaseSettings):
         "records; raise to WARNING to quieten them.",
     )
 
+    # ------------------------------------------------------------- documents
+    #
+    # The "discuss this document" session path: upload or URL, parsed, chatted about,
+    # never joining any controlled corpus. See app/documents/.
+    documents_storage_path: str = Field(
+        "./data/uploads", description="Local directory uploaded/fetched documents are saved to"
+    )
+    documents_upload_max_bytes: int = Field(
+        50_000_000, gt=0, description="Largest upload accepted, in bytes"
+    )
+    documents_ttl_hours: int = Field(
+        48, gt=0, description="How long a document (and its storage object) survives before cleanup"
+    )
+    documents_fetch_timeout_seconds: float = Field(
+        10.0, gt=0, description="Read timeout for the guarded URL fetcher"
+    )
+    documents_fetch_max_redirects: int = Field(
+        3, ge=0, description="Redirects the guarded fetcher will follow, each re-validated"
+    )
+    documents_fetch_max_bytes: int = Field(
+        20_000_000, gt=0, description="Largest fetched-URL response accepted, in bytes"
+    )
+    documents_fetch_denied_cidrs: list[str] = Field(
+        default_factory=list,
+        description="Extra CIDR ranges the fetcher refuses to reach, beyond the built-in "
+        "private/loopback/link-local blocklist — e.g. an organisation's own plant ranges",
+    )
+
     @model_validator(mode="after")
     def _enabled_tiers_are_fully_configured(self) -> "Settings":
         """An enabled tier missing base_url or model is never valid, so refuse it here.

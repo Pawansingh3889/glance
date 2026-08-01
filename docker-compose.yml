@@ -84,6 +84,7 @@ services:
       LLM_TIER3_API_KEY: ${LLM_TIER3_API_KEY:-}
       LLM_TIER3_MODEL: ${LLM_TIER3_MODEL:-llama3.2:3b}
       LLM_TIER3_TIMEOUT_SECONDS: ${LLM_TIER3_TIMEOUT_SECONDS:-300}
+      DOCUMENTS_STORAGE_PATH: /data/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -96,6 +97,10 @@ services:
       # it is a no-op on Docker and on systems without SELinux.
       - ./backend:/app:z
       - /app/.venv
+      # Uploaded/fetched documents. A named volume, not a bind mount, so ownership and
+      # SELinux labelling aren't the developer's problem, and it survives `compose down`
+      # the same way pgdata does.
+      - documents_data:/data/uploads
     command: >-
       sh -c "alembic upgrade head &&
              python -m app.seed &&
@@ -125,3 +130,4 @@ volumes:
   # Model weights are several GB; a named volume keeps them across `compose down`
   # so the pull happens once rather than on every restart.
   ollama:
+  documents_data:

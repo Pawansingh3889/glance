@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "./api";
 import { useAuthStore } from "./store";
-import type { Credentials, RunDetail, TemplateWrite } from "./types";
+import type { Credentials, RunDetail, SessionDocument, TemplateWrite } from "./types";
 
 /** The signed-in user's id, or null. Every query below is keyed on it so one account's
  *  cached data can never be shown to the next one after a sign-out and sign-in. */
@@ -202,5 +202,52 @@ export function useSendRunMessage(id: string) {
     mutationFn: (content: string) => api.sendRunMessage(id, content),
     // The turn returns the whole updated run, so seed the cache rather than refetch it.
     onSuccess: (run) => qc.setQueryData(["run", id, userId], run),
+  });
+}
+
+// --- documents (the "discuss this document" session path) ---------------------
+
+export function useDocuments() {
+  const userId = useCurrentUserId();
+  return useQuery({
+    queryKey: ["documents", userId],
+    queryFn: api.listDocuments,
+    enabled: !!userId,
+  });
+}
+
+export function useDocument(id: string) {
+  const userId = useCurrentUserId();
+  return useQuery({
+    queryKey: ["document", id, userId],
+    queryFn: () => api.getDocument(id),
+    enabled: !!userId,
+  });
+}
+
+export function useUploadDocument() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => api.uploadDocument(file),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["documents"] }),
+  });
+}
+
+export function useFetchDocumentUrl() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (url: string) => api.fetchDocumentUrl(url),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["documents"] }),
+  });
+}
+
+export function useSendDocumentMessage(id: string) {
+  const qc = useQueryClient();
+  const userId = useCurrentUserId();
+  return useMutation({
+    mutationFn: (content: string) => api.sendDocumentMessage(id, content),
+    // The turn returns the whole updated document, so seed the cache rather than
+    // refetch it — same reasoning as useSendRunMessage.
+    onSuccess: (document: SessionDocument) => qc.setQueryData(["document", id, userId], document),
   });
 }

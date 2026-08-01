@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.config import get_settings
 from app.db.base import Base
+from app.documents import models as _documents_models  # noqa: F401
 from app.runs import models as _runs_models  # noqa: F401
 from app.templates import models as _templates_models  # noqa: F401
 from app.users import models as _users_models  # noqa: F401

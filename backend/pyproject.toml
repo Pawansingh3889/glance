@@ -19,6 +19,15 @@ dependencies = [
     "pyjwt>=2.10",
     "argon2-cffi>=23.1",
     "email-validator>=2.2",
+    # Session-document parsing (app/documents/parsing.py): layout, reading order, table
+    # structure, OCR for scans.
+    "docling>=2.0",
+    # FastAPI raises at import time without this — it backs every multipart UploadFile
+    # route (app/documents/router.py's upload endpoint).
+    "python-multipart>=0.0.20",
+    # Magic-byte type sniffing for uploads (app/documents/service.py). Pure Python, no
+    # system libmagic to add to the Dockerfile — chosen over python-magic for that reason.
+    "filetype>=1.2",
 ]
 
 [dependency-groups]
@@ -54,6 +63,11 @@ line-length = 100
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# Pure-Python magic-byte sniffing (app/documents/service.py); ships no stubs/py.typed.
+module = "filetype"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
