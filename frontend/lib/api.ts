@@ -4,9 +4,6 @@ import type {
   AuthToken,
   Credentials,
   GeneratedTemplate,
-  IncidentAnswerWrite,
-  IncidentForm,
-  IncidentReceipt,
   Run,
   ResumableRun,
   RunDetail,
@@ -164,11 +161,4 @@ export const api = {
    *  resume, so each call stands alone. */
   ask: (question: string, language: string) =>
     request<AskAnswer>("/ask", { method: "POST", body: JSON.stringify({ question, language }) }),
-  /** The incident form's fields, from the published template version. */
-  incidentForm: () => request<IncidentForm>("/incidents/form"),
-  fileIncident: (answers: IncidentAnswerWrite[]) =>
-    request<IncidentReceipt>("/incidents", {
-      method: "POST",
-      body: JSON.stringify({ answers }),
-    }),
 };

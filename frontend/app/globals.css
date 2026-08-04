@@ -1,8 +1,7 @@
-/* Glance — food safety, HACCP and health-and-safety surveys.
+/* Glance — conversational surveys.
  *
- * The palette is built for the domain: a deep navy as the ink, a bright cyan
- * pulled off cold water for accents, and the two colours a factory floor already reads
- * without a legend — hazard amber for health and safety, a clean green for "in spec".
+ * A deep navy as the ink, a bright cyan for accents, and two colours that read without
+ * a legend on a shared device — amber for attention, a clean green for "all good".
  * Token *names* are unchanged from the previous theme on purpose: every rule below and
  * every component already refers to them, so re-pointing the values restyles the whole
  * app rather than only the screens that got rewritten. */

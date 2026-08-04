@@ -65,16 +65,6 @@ interface I18n {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: Dictionary;
-  /** The wording for an incident question, falling back to whatever the API returned.
-   *
-   *  This fallback is deliberate and is not the "silent default" the codebase forbids
-   *  elsewhere: showing the English question is strictly better than a blank or a key,
-   *  and it is what happens when the template is republished with new questions. */
-  question: (id: string, fallback: string) => string;
-  /** Likewise for a select option, keyed by its English text. */
-  option: (text: string) => string;
-  /** Fills {n} and picks the singular or plural form. */
-  count: (one: string, other: string, n: number) => string;
 }
 
 const I18nContext = createContext<I18n | null>(null);
@@ -95,9 +85,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       locale,
       setLocale: writeLocale,
       t,
-      question: (id, fallback) => t.questions[id] ?? fallback,
-      option: (text) => t.options[text] ?? text,
-      count: (one, other, n) => (n === 1 ? one : other).replace("{n}", String(n)),
     };
   }, [locale]);
 

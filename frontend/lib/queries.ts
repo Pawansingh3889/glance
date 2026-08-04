@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "./api";
 import { useAuthStore } from "./store";
-import type { Credentials, IncidentAnswerWrite, RunDetail, TemplateWrite } from "./types";
+import type { Credentials, RunDetail, TemplateWrite } from "./types";
 
 /** The signed-in user's id, or null. Every query below is keyed on it so one account's
  *  cached data can never be shown to the next one after a sign-out and sign-in. */
@@ -212,28 +212,6 @@ export function useAsk() {
   return useMutation({
     mutationFn: ({ question, language }: { question: string; language: string }) =>
       api.ask(question, language),
-  });
-}
-
-/** The incident form's fields. Cached for the session — the published version only
- *  changes when someone republishes the template. */
-export function useIncidentForm() {
-  const userId = useCurrentUserId();
-  return useQuery({
-    queryKey: ["incident-form", userId],
-    queryFn: () => api.incidentForm(),
-    enabled: Boolean(userId),
-    staleTime: 5 * 60 * 1000,
-  });
-}
-
-export function useFileIncident() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (answers: IncidentAnswerWrite[]) => api.fileIncident(answers),
-    // A filed report is a completed run against the incident template, so anything
-    // listing that template's runs is now stale.
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["template-runs"] }),
   });
 }
 

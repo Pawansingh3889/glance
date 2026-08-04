@@ -104,8 +104,8 @@ export function CreatorSignIn() {
 
         <p className="gate-note gate-note-quiet">
           {t.sso.notYou}{" "}
-          <Link href="/report" className="qa-link">
-            {t.nav.report}
+          <Link href="/respond" className="qa-link">
+            {t.nav.respond}
           </Link>
         </p>
       </div>

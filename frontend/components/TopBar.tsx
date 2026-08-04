@@ -44,12 +44,8 @@ export function TopBar() {
               {t.nav.respond}
             </Link>
           )}
-          {/* Both of these cross the role line, unlike Build and Respond: a line leader
-              finding an unsafe condition files the same report an operative does, and
-              both ask the same questions. */}
-          <Link href="/report" aria-current={pathname === "/report" ? "page" : undefined}>
-            {t.nav.report}
-          </Link>
+          {/* Ask crosses the role line, unlike Build and Respond: anyone signed in can
+              put a question to the assistant. */}
           <Link href="/ask" aria-current={pathname === "/ask" ? "page" : undefined}>
             {t.nav.ask}
           </Link>

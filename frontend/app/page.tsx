@@ -10,9 +10,9 @@ import { useI18n } from "@/lib/i18n";
  *
  *  Deliberately short. The previous version explained six standards, three steps, a
  *  statistics band and a panel of sample findings — none of which the two people this
- *  page actually serves need. They are: someone on shift who has to report something or
- *  ask something, and a safety lead who needs to sign in. Everything here is one of
- *  those two, and nothing else earned its place.
+ *  page actually serves need. They are: someone who has to answer a survey or ask
+ *  something, and an author who needs to sign in. Everything here is one of those two,
+ *  and nothing else earned its place.
  */
 export default function Landing() {
   const { t } = useI18n();
@@ -45,8 +45,8 @@ export default function Landing() {
 
             <Reveal delay={120}>
               <div className="lp-hero-actions">
-                <Link href="/report" className="lp-btn lp-btn-hazard lp-btn-lg">
-                  {t.landing.reportCta}
+                <Link href="/respond" className="lp-btn lp-btn-hazard lp-btn-lg">
+                  {t.landing.respondCta}
                 </Link>
                 <Link href="/ask" className="lp-btn lp-btn-outline lp-btn-lg">
                   {t.landing.askCta}
@@ -64,8 +64,8 @@ export default function Landing() {
                 <span className="lp-path-tag lp-path-tag-floor">{t.landing.staffTitle}</span>
                 <p className="lp-path-body">{t.landing.staffBody}</p>
                 <div className="lp-path-links">
-                  <Link href="/report" className="lp-inline-link">
-                    {t.landing.reportCta} →
+                  <Link href="/respond" className="lp-inline-link">
+                    {t.landing.respondCta} →
                   </Link>
                   <Link href="/ask" className="lp-inline-link">
                     {t.landing.askCta} →

@@ -1,23 +1,10 @@
 import type { Dictionary } from "./en";
-import {
-  Q_AREA,
-  Q_HURT,
-  Q_IMMEDIATE,
-  Q_KIND,
-  Q_PPE,
-  Q_PREVENT,
-  Q_SEVERITY,
-  Q_WHAT,
-  Q_WHEN,
-} from "../incidentKeys";
 
-/** Polish. See TRANSLATIONS.md — these strings have not been reviewed by a native
- *  speaker, and the incident form is safety-critical. */
+/** Polish. See TRANSLATIONS.md — not reviewed by a native speaker. */
 export const pl: Dictionary = {
   nav: {
     build: "Twórz",
     respond: "Odpowiedz",
-    report: "Zgłoś",
     ask: "Zapytaj",
     signOut: "Wyloguj",
     signIn: "Zaloguj",
@@ -25,24 +12,23 @@ export const pl: Dictionary = {
     language: "Język",
   },
   landing: {
-    eyebrow: "Bezpieczeństwo żywności · HACCP · BHP",
-    heroTitle: "Zapytaj halę produkcyjną, co wykryje audyt.",
+    eyebrow: "Rozmowa · Wielojęzyczność · Osadzanie",
+    heroTitle: "Pytaj jak człowiek, nie jak formularz.",
     heroBody:
-      "Rozmowne kontrole bezpieczeństwa żywności i BHP dla zakładów przetwórstwa ryb — problemy zgłaszają ludzie przy linii, a nie audytor.",
-    reportCta: "Zgłoś zdarzenie",
+      "Opisz ankietę, której potrzebujesz, a Glance ją przygotuje. Ludzie odpowiadają w rozmowie, na dowolnym urządzeniu i we własnym języku.",
+    respondCta: "Wypełnij ankietę",
     askCta: "Zadaj pytanie",
-    staffTitle: "Dla wszystkich na zmianie",
+    staffTitle: "Dla wszystkich odpowiadających",
     staffBody: "Konto nie jest potrzebne. Podaj imię i zaczynaj.",
-    managerTitle: "Dla kierowników BHP i działu technicznego",
+    managerTitle: "Dla autorów ankiet",
     managerBody:
       "Zaloguj się firmowym kontem Microsoft, aby tworzyć ankiety i przeglądać wyniki.",
     managerCta: "Zaloguj przez Microsoft",
-    footerNote:
-      "Demonstracyjna usługa ankiet. Wymienione normy — HACCP, BRCGS — należą do ich właścicieli.",
+    footerNote: "Demonstracyjna usługa ankiet.",
   },
   guest: {
     title: "Twoje imię",
-    body: "Żeby zgłoszenie miało podpis. Bez konta, bez hasła.",
+    body: "Żeby odpowiedzi miały podpis. Bez konta, bez hasła.",
     nameLabel: "Imię i nazwisko",
     namePlaceholder: "np. Marta K",
     emailLabel: "E-mail",
@@ -55,31 +41,11 @@ export const pl: Dictionary = {
   },
   sso: {
     title: "Logowanie",
-    body: "Autorzy ankiet i kierownicy BHP logują się firmowym kontem Microsoft.",
+    body: "Autorzy ankiet logują się firmowym kontem Microsoft.",
     button: "Zaloguj przez Microsoft",
     unavailable:
       "Logowanie firmowe nie jest jeszcze skonfigurowane. Poproś administratora o ustawienie AUTH_PROVIDER=oidc.",
-    notYou:
-      "Nie jesteś autorem? Aby zgłosić zdarzenie lub wypełnić ankietę, logowanie nie jest potrzebne.",
-  },
-  report: {
-    title: "Zgłoś zdarzenie",
-    lede: "Uraz, zdarzenie potencjalnie wypadkowe albo coś niebezpiecznego, co widziałeś.",
-    urgent: "Jeśli ktoś jest ranny teraz, najpierw wezwij osobę udzielającą pierwszej pomocy.",
-    optional: "Opcjonalnie",
-    submit: "Wyślij zgłoszenie",
-    submitting: "Wysyłanie…",
-    remaining_one: "Zostało {n} pytanie",
-    remaining_other: "Zostało pytań: {n}",
-    filedTitle: "Zgłoszenie wysłane",
-    filedRef: "Numer",
-    filedNote: "Podaj ten numer, jeśli ktoś zapyta. Twój kierownik BHP już je widzi.",
-    another: "Zgłoś kolejne",
-    askInstead: "Zamiast tego zadaj pytanie",
-    writeIn: "Gdzie to było?",
-    yes: "Tak",
-    no: "Nie",
-    freeText: "Własnymi słowami…",
+    notYou: "Nie jesteś autorem? Nie musisz się logować, aby wypełnić ankietę.",
   },
   ask: {
     title: "Zapytaj o zakład",
@@ -93,9 +59,6 @@ export const pl: Dictionary = {
     hint: "Enter wysyła · Shift + Enter nowa linia",
     tryTitle: "Wypróbuj jedno z tych",
     offTopic: "Poza tematem",
-    reportPrompt: "Coś się wydarzyło na zmianie?",
-    reportLink: "Zgłoś zdarzenie",
-    reportPromptEnd: "zamiast tylko pytać tutaj.",
     examples: [
       "W jakiej temperaturze przechowywać schłodzone ryby?",
       "Jak często sprawdzać wykrywacz metali?",
@@ -116,45 +79,5 @@ export const pl: Dictionary = {
   common: {
     loading: "Ładowanie…",
     somethingWrong: "Coś poszło nie tak.",
-  },
-  questions: {
-    [Q_WHEN]: "Kiedy to się stało?",
-    [Q_AREA]: "Na jakim obszarze lub linii?",
-    [Q_KIND]: "Jakiego rodzaju było to zdarzenie?",
-    [Q_SEVERITY]: "Jak poważne było?",
-    [Q_WHAT]: "Co się stało? Opisz własnymi słowami.",
-    [Q_PPE]: "Jakie środki ochrony były wtedy używane?",
-    [Q_HURT]: "Czy ktoś został ranny?",
-    [Q_IMMEDIATE]: "Co zrobiono od razu?",
-    [Q_PREVENT]: "Co zapobiegłoby powtórzeniu się tego?",
-  },
-  options: {
-    "Intake / landing": "Przyjęcie / wyładunek",
-    Filleting: "Filetowanie",
-    "Grading and weighing": "Sortowanie i ważenie",
-    Packing: "Pakowanie",
-    "Cold store": "Chłodnia",
-    "Blast freezer": "Zamrażarka szokowa",
-    Dispatch: "Wysyłka",
-    "Yard and external": "Plac i teren zewnętrzny",
-    "Workshop / engineering": "Warsztat / utrzymanie ruchu",
-    "Near miss": "Zdarzenie potencjalnie wypadkowe",
-    Injury: "Uraz",
-    "Ill health": "Choroba",
-    "Damage to plant or equipment": "Uszkodzenie maszyn lub sprzętu",
-    "Environmental / refrigerant release": "Środowisko / uwolnienie czynnika chłodniczego",
-    "No treatment needed": "Bez potrzeby leczenia",
-    "First aid only": "Tylko pierwsza pomoc",
-    "Medical treatment": "Leczenie medyczne",
-    "Lost-time injury": "Uraz z niezdolnością do pracy",
-    "Potentially RIDDOR reportable": "Możliwe zgłoszenie RIDDOR",
-    "Cut-resistant gloves": "Rękawice antyprzecięciowe",
-    "Chainmail glove or apron": "Rękawica lub fartuch kolczugowy",
-    "Wellingtons / non-slip footwear": "Kalosze / obuwie antypoślizgowe",
-    "Hairnet and beard snood": "Siatka na włosy i osłona brody",
-    "Eye protection": "Ochrona oczu",
-    "Hearing protection": "Ochrona słuchu",
-    "Cold-store jacket": "Kurtka chłodnicza",
-    "None of these": "Żadne z powyższych",
   },
 };

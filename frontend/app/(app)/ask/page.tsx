@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 import { useI18n } from "@/lib/i18n";
@@ -108,15 +107,6 @@ export default function Ask() {
               </p>
             ))}
           {answer.caveat ? <p className="qa-caveat">{answer.caveat}</p> : null}
-          {answer.in_scope ? (
-            <footer className="qa-foot">
-              {t.ask.reportPrompt}{" "}
-              <Link href="/report" className="qa-link">
-                {t.ask.reportLink}
-              </Link>{" "}
-              {t.ask.reportPromptEnd}
-            </footer>
-          ) : null}
         </article>
       ) : null}
     </div>

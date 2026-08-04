@@ -4,10 +4,10 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Glance — food safety, HACCP & health and safety surveys",
+  title: "Glance — conversational surveys",
   description:
-    "Audit HACCP critical control points, cold chain integrity and health and safety "
-    + "reporting across fish processing and food manufacturing sites.",
+    "Build a survey by describing it, then let people answer it in a conversation "
+    + "rather than a form — on any device, in their own language.",
 };
 
 /** The root layout is deliberately unauthenticated: the marketing page at "/" has to be
