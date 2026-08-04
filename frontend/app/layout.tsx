@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Harbourline — food safety, HACCP & health and safety surveys",
+  title: "Glance — food safety, HACCP & health and safety surveys",
   description:
     "Audit HACCP critical control points, cold chain integrity and health and safety "
     + "reporting across fish processing and food manufacturing sites.",

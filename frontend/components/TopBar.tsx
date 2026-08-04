@@ -31,7 +31,7 @@ export function TopBar() {
     <header className="topbar">
       <div className="topbar-left">
         <Link href={home} className="topbar-brand">
-          Harbour<span>line</span>
+          Gla<span>nce</span>
         </Link>
         <nav className="topbar-nav" aria-label="Main">
           {/* Roles don't cross: creators build, participants answer. */}

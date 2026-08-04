@@ -62,7 +62,7 @@ export async function signOutFromMicrosoft(): Promise<void> {
   if (!ssoConfigured || app === null) return;
   // Clears only this app's cached account. Deliberately not a full logoutRedirect: that
   // signs the person out of every Microsoft session in the browser, which is not what
-  // "sign out of Harbourline" should mean.
+  // "sign out of Glance" should mean.
   const account = app.getAllAccounts()[0];
   if (account) app.clearCache({ account });
 }

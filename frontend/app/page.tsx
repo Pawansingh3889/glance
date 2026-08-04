@@ -21,9 +21,9 @@ export default function Landing() {
     <div className="lp">
       <header className="lp-nav">
         <div className="lp-nav-in">
-          <Link href="/" className="lp-brand" aria-label="Harbourline">
+          <Link href="/" className="lp-brand" aria-label="Glance">
             <span className="lp-mark" aria-hidden="true" />
-            Harbour<span>line</span>
+            Gla<span>nce</span>
           </Link>
           <div className="lp-nav-cta">
             <LanguageSwitcher />
@@ -93,7 +93,7 @@ export default function Landing() {
         <div className="lp-foot-in">
           <p className="lp-brand lp-brand-foot">
             <span className="lp-mark" aria-hidden="true" />
-            Harbour<span>line</span>
+            Gla<span>nce</span>
           </p>
           <p className="lp-foot-note">{t.landing.footerNote}</p>
         </div>
