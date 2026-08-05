@@ -5,7 +5,19 @@ All notable changes to the Glance Survey Service, from the first commit onward.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The project is not yet versioned, so entries are grouped by date. Newest first.
 
-## 2026-08-05 — Housekeeping behind the incident front end's departure
+## 2026-08-05 — The summary checker, and housekeeping behind the incident front end
+
+### Added
+- **A fresh-context checker on the run summary.** The quote gate can prove a quote
+  verbatim, but nothing checked whether the headline and key facts were *supported* —
+  and the summary is a creator-facing artifact they act on. A second model call now
+  reads the draft against the answers (and nothing of how the draft was made), and
+  either passes it or sends it back once with notes through the same channel a schema
+  rejection uses; a draft refused twice is a 502, not a stored summary. The verdict is
+  itself schema-gated — an unfaithful verdict that names no problem is invalid, because
+  "fail, no reason given" cannot be redrafted against. Writer and checker share the
+  failover chain by default, with a separate injection seam (`verifier=`) so a
+  different model family can hold the checker's seat.
 
 ### Changed
 - `AuthService` hands new user rows to `UserRepository.add` instead of calling

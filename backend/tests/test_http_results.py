@@ -183,7 +183,8 @@ async def test_summarising_a_run_returns_the_structured_summary(
                 "key_facts": ["Works as a line lead", "Rated onboarding 5 of 5"],
                 "notable_quotes": [{"question": "What's your role?", "quote": "Line lead"}],
             },
-        )
+        ),
+        ToolTurn(text="", tool_name="report_verdict", tool_input={"faithful": True}),
     )
 
     response = await client.post(
