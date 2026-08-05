@@ -102,4 +102,4 @@ class RunRepository:
             .options(selectinload(SurveyRun.answers))
         )
         rows = (await self.session.execute(stmt)).all()
-        return [(r[0], r[1], r[2].get("title", "")) for r in rows]
+        return [(r[0], r[1], r[2]["title"]) for r in rows]
