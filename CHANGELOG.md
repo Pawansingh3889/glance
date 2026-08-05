@@ -5,6 +5,25 @@ All notable changes to the Glance Survey Service, from the first commit onward.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The project is not yet versioned, so entries are grouped by date. Newest first.
 
+## 2026-08-05 — Housekeeping behind the incident front end's departure
+
+### Changed
+- `AuthService` hands new user rows to `UserRepository.add` instead of calling
+  `session.add` itself — every other domain already keeps writes behind its repository;
+  auth was the one service still reaching past it.
+- The resumable-runs query reads the snapshot's `title` by subscript rather than
+  `.get("title", "")`. Every snapshot has carried the key since the first publish, so
+  the empty-string default was one more of the per-reader guesses `snapshot.py` exists
+  to eliminate.
+
+### Removed
+- The `.rf-*` styles for the incident report form and its filed receipt — ~160 lines of
+  `globals.css` that nothing has referenced since the incident front end was dropped.
+
+### Fixed
+- `.gitignore` now covers Kate workspace files (`.kateproject`, `.kateproject.d/`,
+  `*.kate-swp`) alongside the existing IDEA and VS Code entries.
+
 ## 2026-07-27 — Gate mining, the LLM boundary, and the stretch goals
 
 The day's theme is a method: construct an input whose correct verdict is known, run the
