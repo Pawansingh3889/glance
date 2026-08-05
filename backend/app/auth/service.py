@@ -41,7 +41,7 @@ class AuthService:
             role=UserRole.participant,
             password_hash=hash_password(data.password),
         )
-        self.session.add(user)
+        self.users.add(user)
         try:
             await self.session.commit()
         except IntegrityError:
@@ -76,7 +76,7 @@ class AuthService:
             # hold it is to be handed the token issued right here.
             password_hash=None,
         )
-        self.session.add(user)
+        self.users.add(user)
         await self.session.commit()
         await self.session.refresh(user)
         token, expires_in = self.issuer.issue(user.id)
